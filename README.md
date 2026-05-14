@@ -102,8 +102,9 @@
 VitePress 2.0.0-alpha.16 (静态文档站)
   └── Vue 3 + Element Plus (UI 组件体系)
         └── Docker 多阶段构建
-              └── nginx:alpine (生产托管)
-                    └── SealOS 新加坡区容器部署
+              └── Node API + 静态文件服务
+                    ├── /zh-cn/* 课程页面
+                    └── /api/* 登录、会员、ZPAY 支付
 ```
 
 **自动化部署流程：**
@@ -113,7 +114,7 @@ git push main
     ↓
 GitHub Actions 触发
     ↓
-Docker 多阶段构建（Node 20 构建 → nginx 托管）
+Docker 多阶段构建（Node 20 构建 → Node 运行）
     ↓
 推送镜像到 Docker Hub (jingyuanzzz/learn-with-ai:latest)
     ↓
@@ -158,11 +159,17 @@ learn-with-ai/
 │   │           ├── HomeFeatures.vue         # 首页主组件
 │   │           ├── PricingPlans.vue          # 定价页
 │   │           ├── PaywallBlock.vue          # 付费内容锁
+│   │           ├── AuthStatusButton.vue      # 登录与会员状态入口
+│   │           ├── AuthForm.vue              # 登录 / 注册表单
+│   │           ├── AccountCenter.vue         # 账户与权益中心
 │   │           ├── PromptLab.vue             # Prompt 实验室
 │   │           └── AudiencePathSelector.vue  # 人群路径选择器
 │   └── zh-cn/
 │       ├── index.md                # 中文首页
 │       ├── pricing/                # 定价页
+│       ├── account/                # 账户页
+│       ├── login/                  # 登录页
+│       ├── register/               # 注册页
 │       ├── free/                   # 免费入门（5节）
 │       ├── youth/                  # 青少年模块
 │       ├── young-adult/            # 青年模块
@@ -170,7 +177,8 @@ learn-with-ai/
 ├── .github/workflows/
 │   └── deploy.yml                  # GitHub Actions 自动构建推送
 ├── Dockerfile                      # 多阶段构建镜像
-├── nginx.conf                      # SPA 路由支持配置
+├── server/                         # SealOS 运行时 API + 静态服务
+│   └── index.mjs                   # 登录、会员、订单、ZPAY 签名与回调
 ├── CLAUDE.md                       # Claude Code 项目指令
 └── AGENTS.md                       # AI Agent 协作指南
 ```
@@ -183,6 +191,8 @@ learn-with-ai/
 - **部署平台**：SealOS 新加坡区 App Launchpad
 - **容器端口**：80
 - **构建环境变量**：`SEALOS=1`（控制 VitePress base 路径）
+- **运行时数据**：挂载持久卷到 `/data`
+- **支付接口**：ZPAY，接入细节见 `docs/PAYMENT_ZPAY.md`
 - **GitHub 仓库**：[ntu-zjy/learn-with-ai](https://github.com/ntu-zjy/learn-with-ai)
 
 每次推送 main 分支后，GitHub Actions 自动构建并更新 Docker Hub 镜像。在 SealOS 控制台点击「重新部署」即可拉取最新版本。
@@ -197,8 +207,9 @@ learn-with-ai/
 |------|------|
 | `<HomeFeatures />` | 首页：受众选择器 + 课程预览 + 定价概览 |
 | `<PromptLab />` | Prompt 对比实验台，4个场景可实操 |
-| `<PaywallBlock />` | 付费内容锁，模糊遮罩 + 解锁引导 |
-| `<PricingPlans />` | 完整定价页，年/月切换 + FAQ |
+| `<PaywallBlock />` | 付费内容锁，按会员等级解锁 |
+| `<PricingPlans />` | 完整定价页，年/月切换 + 支付入口 |
+| `<AccountCenter />` | 账户状态、会员权益和 API 接入契约 |
 | `<AudiencePathSelector />` | 三路人群引导跳转 |
 | `<StepBar />` | 步骤进度条 |
 | `<SummaryCard />` | 章节总结卡片 |

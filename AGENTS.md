@@ -16,6 +16,8 @@
 | 首页内容 | `docs/zh-cn/index.md` + `docs/.vitepress/theme/components/HomeFeatures.vue` |
 | 定价信息 | `docs/.vitepress/theme/components/PricingPlans.vue` + `HomeFeatures.vue` 中的 `plans` 数组 |
 | 付费锁逻辑 | `docs/.vitepress/theme/components/PaywallBlock.vue` |
+| 登录 / 会员状态 | `docs/.vitepress/theme/composables/useMembership.js` + `AuthStatusButton.vue` |
+| 后端 API / ZPAY 支付 | `server/index.mjs` + `docs/PAYMENT_ZPAY.md` |
 | Prompt 实验台 | `docs/.vitepress/theme/components/PromptLab.vue` |
 | 全局样式 | `docs/.vitepress/theme/style.css` |
 | 组件注册 | `docs/.vitepress/theme/index.js` |

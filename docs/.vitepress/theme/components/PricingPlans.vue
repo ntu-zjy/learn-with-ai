@@ -8,14 +8,39 @@
       <button :class="{ active: billing === 'yearly' }" @click="billing = 'yearly'">按年付（省 40%）</button>
       <button :class="{ active: billing === 'monthly' }" @click="billing = 'monthly'">按月付</button>
     </div>
+    <div class="pay-type-toggle" aria-label="支付方式">
+      <span>支付方式</span>
+      <button :class="{ active: payType === 'alipay' }" type="button" @click="payType = 'alipay'">
+        支付宝
+      </button>
+      <button :class="{ active: payType === 'wxpay' }" type="button" @click="payType = 'wxpay'">
+        微信支付
+      </button>
+    </div>
+    <el-alert
+      v-if="checkoutNotice"
+      class="checkout-notice"
+      :title="checkoutNotice"
+      type="success"
+      show-icon
+      :closable="false"
+    />
+    <el-alert
+      v-if="membership.error"
+      class="checkout-notice"
+      :title="membership.error"
+      type="warning"
+      show-icon
+      :closable="false"
+    />
     <div class="plans-grid">
       <div
         v-for="plan in plans"
         :key="plan.id"
         class="plan-card"
-        :class="{ highlight: plan.highlight }"
+        :class="{ highlight: plan.highlight, current: plan.id !== 'free' && hasPlanAccess(plan.id) }"
       >
-        <div class="plan-badge" v-if="plan.badge">{{ plan.badge }}</div>
+        <div v-if="plan.badge" class="plan-badge">{{ plan.badge }}</div>
         <div class="plan-header">
           <div class="plan-icon">{{ plan.icon }}</div>
           <div class="plan-name">{{ plan.name }}</div>
@@ -25,7 +50,7 @@
           <span class="plan-price">{{ billing === 'yearly' ? plan.yearlyPrice : plan.monthlyPrice }}</span>
           <span class="plan-period">{{ billing === 'yearly' ? '/ 年' : '/ 月' }}</span>
         </div>
-        <div class="plan-savings" v-if="billing === 'yearly' && plan.savings">
+        <div v-if="billing === 'yearly' && plan.savings" class="plan-savings">
           比月付节省 {{ plan.savings }}
         </div>
         <ul class="plan-features">
@@ -34,9 +59,15 @@
             {{ f.text }}
           </li>
         </ul>
-        <a href="#" class="plan-cta" :class="plan.highlight ? 'cta-primary' : 'cta-secondary'">
-          {{ plan.cta }}
-        </a>
+        <button
+          class="plan-cta"
+          type="button"
+          :class="plan.highlight ? 'cta-primary' : 'cta-secondary'"
+          :disabled="plan.id !== 'free' && (membership.loading || hasPlanAccess(plan.id))"
+          @click="handlePlanClick(plan)"
+        >
+          {{ getCtaText(plan) }}
+        </button>
         <div class="plan-audience">适合：{{ plan.audience }}</div>
       </div>
     </div>
@@ -44,16 +75,22 @@
       <h3>常见问题</h3>
       <div v-for="q in faqs" :key="q.q" class="faq-item" @click="q.open = !q.open">
         <div class="faq-q">{{ q.q }} <span>{{ q.open ? '−' : '+' }}</span></div>
-        <div class="faq-a" v-if="q.open">{{ q.a }}</div>
+        <div v-if="q.open" class="faq-a">{{ q.a }}</div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
+import { ElMessage } from 'element-plus'
+import { planLevel, useMembership } from '../composables/useMembership'
 
 const billing = ref('yearly')
+const payType = ref('alipay')
+const checkoutNotice = ref('')
+
+const { membership, currentPlan, isAuthenticated, startCheckout, refreshMembership } = useMembership()
 
 const plans = [
   {
@@ -164,6 +201,49 @@ const faqs = reactive([
     open: false
   }
 ])
+
+const paidPlanIds = computed(() => plans.filter((plan) => plan.id !== 'free').map((plan) => plan.id))
+
+onMounted(async () => {
+  const params = new URLSearchParams(window.location.search)
+  const checkout = params.get('checkout') || params.get('payment')
+
+  if (checkout === 'success') {
+    checkoutNotice.value = '支付完成，正在同步你的会员权益。'
+    await refreshMembership()
+  }
+
+  if (checkout === 'cancel') {
+    ElMessage.info('支付已取消，你可以随时重新选择方案。')
+  }
+})
+
+function isCurrentPlan(planId) {
+  return currentPlan.value === planId
+}
+
+function hasPlanAccess(planId) {
+  return planLevel(currentPlan.value) >= planLevel(planId)
+}
+
+function getCtaText(plan) {
+  if (plan.id === 'free') return '立即开始'
+  if (isCurrentPlan(plan.id)) return '当前方案'
+  if (hasPlanAccess(plan.id)) return '已包含'
+  if (!isAuthenticated.value) return `登录并${plan.cta}`
+  if (paidPlanIds.value.includes(currentPlan.value) && planLevel(plan.id) > planLevel(currentPlan.value)) return `升级到${plan.name}`
+  return plan.cta
+}
+
+async function handlePlanClick(plan) {
+  if (plan.id === 'free') {
+    window.location.href = '/zh-cn/free/why-different/'
+    return
+  }
+
+  const started = await startCheckout({ plan: plan.id, billing: billing.value, payType: payType.value })
+  if (!started && membership.value.error) ElMessage.warning(membership.value.error)
+}
 </script>
 
 <style scoped>
@@ -221,6 +301,39 @@ const faqs = reactive([
   box-shadow: 0 1px 4px rgba(0,0,0,.1);
 }
 
+.pay-type-toggle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: -24px auto 36px;
+  color: var(--vp-c-text-2);
+  font-size: 13px;
+}
+
+.pay-type-toggle button {
+  padding: 7px 14px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 8px;
+  background: var(--vp-c-bg);
+  color: var(--vp-c-text-1);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.pay-type-toggle button.active {
+  border-color: var(--vp-c-brand-1);
+  color: var(--vp-c-brand-1);
+  background: var(--vp-c-brand-soft);
+}
+
+.checkout-notice {
+  margin: -16px auto 28px;
+  max-width: 680px;
+}
+
 .plans-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -247,6 +360,10 @@ const faqs = reactive([
 .plan-card.highlight {
   border-color: var(--vp-c-brand-1);
   background: var(--vp-c-brand-soft);
+}
+
+.plan-card.current {
+  border-color: var(--vp-c-green-1);
 }
 
 .plan-badge {
@@ -347,13 +464,22 @@ const faqs = reactive([
 
 .plan-cta {
   display: block;
+  width: 100%;
   text-align: center;
   padding: 11px;
+  border: 0;
   border-radius: 10px;
   font-weight: 600;
   font-size: 14px;
+  font-family: inherit;
   text-decoration: none;
+  cursor: pointer;
   transition: all 0.2s;
+}
+
+.plan-cta:disabled {
+  cursor: default;
+  opacity: 0.72;
 }
 
 .cta-primary {

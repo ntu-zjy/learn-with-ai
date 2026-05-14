@@ -8,10 +8,18 @@ COPY . .
 ENV SEALOS=1
 RUN npm run build
 
-FROM nginx:alpine
-COPY --from=builder /app/docs/.vitepress/dist /usr/share/nginx/html
+FROM node:20-alpine AS runner
 
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+WORKDIR /app
+ENV NODE_ENV=production
+ENV PORT=80
+ENV STATIC_DIR=/app/dist
+ENV DATA_DIR=/data
+
+COPY --from=builder /app/docs/.vitepress/dist /app/dist
+COPY server /app/server
+
+VOLUME ["/data"]
 
 EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["node", "server/index.mjs"]

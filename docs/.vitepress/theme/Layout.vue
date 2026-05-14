@@ -3,6 +3,7 @@ import DefaultTheme from 'vitepress/theme'
 import { useData } from 'vitepress'
 import { onMounted } from 'vue'
 import TypeIt from 'typeit'
+import AuthStatusButton from './components/AuthStatusButton.vue'
 
 const { frontmatter } = useData()
 
@@ -20,5 +21,12 @@ onMounted(() => {
 </script>
 
 <template>
-  <DefaultTheme.Layout />
+  <DefaultTheme.Layout>
+    <template #nav-bar-content-after>
+      <AuthStatusButton />
+    </template>
+    <template #nav-screen-content-after>
+      <AuthStatusButton />
+    </template>
+  </DefaultTheme.Layout>
 </template>

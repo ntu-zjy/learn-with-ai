@@ -9,7 +9,9 @@ GitHub Actions (.github/workflows/deploy.yml)
     ↓
 Docker 多阶段构建
   阶段 1：node:20-alpine 构建 VitePress 静态文件
-  阶段 2：nginx:alpine 托管静态文件
+  阶段 2：node:20-alpine 运行 server/index.mjs
+    ├── 托管 VitePress 静态文件
+    └── 提供 /api/auth/*、/api/membership、/api/pay/*
     ↓
 推送镜像到 Docker Hub
   jingyuanzzz/learn-with-ai:latest
@@ -25,14 +27,14 @@ VitePress 的 base 路径根据环境变量自动切换：
 ```javascript
 // docs/.vitepress/config.mjs
 const isSealOS = process.env.SEALOS === '1'
-const base = isSealOS ? '/learn-with-ai/' : '/'
+const base = isSealOS ? '/' : '/learn-with-ai/'
 ```
 
 | 环境 | Base 路径 | 访问地址示例 |
 |------|----------|------------|
-| SealOS 生产 | `/learn-with-ai/` | `https://your-domain/learn-with-ai/zh-cn/` |
-| 本地开发 | `/` | `http://localhost:5173/zh-cn/` |
-| 本地预览 | `/` | `http://localhost:4173/zh-cn/` |
+| SealOS 生产 | `/` | `https://your-domain/zh-cn/` |
+| 本地开发 | `/learn-with-ai/` | `http://localhost:5173/learn-with-ai/zh-cn/` |
+| 本地预览 | `/learn-with-ai/` | `http://localhost:4173/learn-with-ai/zh-cn/` |
 
 Dockerfile 中已设置 `ENV SEALOS=1`，构建时自动使用生产 base 路径。
 
@@ -52,8 +54,21 @@ Dockerfile 中已设置 `ENV SEALOS=1`，构建时自动使用生产 base 路径
 | 容器端口 | `80` |
 | 开放外网访问 | 开启，端口 `80` |
 
-4. 点击「部署」，等待 Pod 变为 Running 状态
-5. 复制 SealOS 分配的域名（格式为 `*.cloud.sealos.io`）
+4. 配置环境变量：
+
+| 环境变量 | 说明 |
+|---------|------|
+| `AUTH_SECRET` | 登录 token 签名密钥，生产环境必须设置为足够长的随机字符串 |
+| `SITE_URL` | SealOS 外网域名，例如 `https://xxx.cloud.sealos.io` |
+| `DATA_DIR` | 数据持久化目录，默认 `/data` |
+| `ZPAY_PID` | ZPAY 商户 PID |
+| `ZPAY_KEY` | ZPAY 商户密钥 |
+| `ZPAY_API` | 默认 `https://zpayz.cn/submit.php` |
+| `ZPAY_MOCK` | 留空为真实支付，设为 `1` 使用 Mock 支付 |
+
+5. 给 `/data` 挂载持久化存储，避免用户、订单和会员权益在 Pod 重建后丢失
+6. 点击「部署」，等待 Pod 变为 Running 状态
+7. 复制 SealOS 分配的域名（格式为 `*.cloud.sealos.io`），并回填到 `SITE_URL`
 
 ## 更新部署
 
@@ -73,6 +88,62 @@ Dockerfile 中已设置 `ENV SEALOS=1`，构建时自动使用生产 base 路径
 
 设置路径：GitHub 仓库 → Settings → Secrets and variables → Actions → New repository secret
 
+## 登录与支付配置
+
+站点镜像内置了轻量 Node API 服务。订单创建、支付签名、ZPAY 回调验签和会员权益写入都在 `server/index.mjs` 中完成，不会把 ZPAY 密钥暴露到浏览器。
+
+前端默认使用同源 API，无需额外配置 Vite 变量：
+
+| 环境变量 | 用途 |
+|---------|------|
+| `VITE_AUTH_LOGIN_URL` | 外部登录入口，可选，前端会附带 `returnTo` 参数 |
+| `VITE_AUTH_LOGOUT_URL` | 退出登录入口，可选，前端会附带 `returnTo` 参数 |
+| `VITE_AUTH_LOGIN_API_URL` | 站内登录 API，返回 `token` 和 `user` |
+| `VITE_AUTH_REGISTER_API_URL` | 站内注册 API，返回 `token` 和 `user` |
+| `VITE_MEMBERSHIP_API_URL` | 会员状态查询接口，使用 Cookie 或 Bearer Token 识别用户 |
+| `VITE_ZPAY_CHECKOUT_API_URL` | 后端创建 ZPAY 支付订单接口，返回 `payUrl` |
+
+同源默认值如下：
+
+| 功能 | 默认地址 |
+|------|---------|
+| 登录 | `/api/auth/login` |
+| 注册 | `/api/auth/register` |
+| 当前用户 / 会员权益 | `/api/auth/me` |
+| ZPAY 创建订单 | `/api/pay/create` |
+| ZPAY 异步回调 | `/api/pay/notify` |
+
+接口返回格式约定：
+
+```json
+// GET VITE_MEMBERSHIP_API_URL
+{
+  "user": { "id": "u_123", "name": "张同学", "email": "user@example.com" },
+  "plan": "pro",
+  "expiresAt": "2027-05-14T00:00:00.000Z"
+}
+```
+
+```json
+// POST VITE_ZPAY_CHECKOUT_API_URL
+{
+  "plan": "pro",
+  "billing": "yearly",
+  "payType": "alipay",
+  "returnUrl": "https://site/zh-cn/pricing/",
+  "cancelUrl": "https://site/zh-cn/pricing/"
+}
+```
+
+```json
+// Response 200
+{
+  "payUrl": "https://zpayz.cn/submit.php?..."
+}
+```
+
+ZPAY 的 `ZPAY_PID`、`ZPAY_KEY`、签名算法、异步回调验签和订单查询方式见 [`docs/PAYMENT_ZPAY.md`](./PAYMENT_ZPAY.md)。这些密钥只能放在服务端环境变量中，不能放进 `VITE_*` 前端变量。
+
 ## 本地构建测试
 
 ```bash
@@ -84,7 +155,7 @@ docker build -t learn-with-ai:local .
 
 # 本地运行容器验证
 docker run -p 8080:80 learn-with-ai:local
-# 访问 http://localhost:8080/learn-with-ai/
+# 访问 http://localhost:8080/zh-cn/
 ```
 
 ## 常见问题
@@ -93,7 +164,7 @@ docker run -p 8080:80 learn-with-ai:local
 
 **原因**：base 路径不匹配。
 
-**排查**：检查访问 URL 是否包含 `/learn-with-ai/` 前缀。生产环境必须有此前缀，本地开发不需要。
+**排查**：SealOS 生产环境访问根路径 `/zh-cn/`；本地 VitePress dev/preview 默认带 `/learn-with-ai/` 前缀。
 
 ### GitHub Actions 构建失败
 

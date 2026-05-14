@@ -21,6 +21,8 @@ import PricingPlans from './components/PricingPlans.vue'
 import AudiencePathSelector from './components/AudiencePathSelector.vue'
 import PromptLab from './components/PromptLab.vue'
 import PaywallBlock from './components/PaywallBlock.vue'
+import AccountCenter from './components/AccountCenter.vue'
+import AuthForm from './components/AuthForm.vue'
 
 export default {
   extends: DefaultTheme,
@@ -41,6 +43,8 @@ export default {
     app.component('AudiencePathSelector', AudiencePathSelector)
     app.component('PromptLab', PromptLab)
     app.component('PaywallBlock', PaywallBlock)
+    app.component('AccountCenter', AccountCenter)
+    app.component('AuthForm', AuthForm)
 
     // Viewer.js + TypeIt 初始化
     let viewer = null
