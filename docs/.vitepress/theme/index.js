@@ -3,9 +3,8 @@ import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import Viewer from 'viewerjs'
 import 'viewerjs/dist/viewer.css'
-import TypeIt from 'typeit'
 import { onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
-import { useRoute, useData } from 'vitepress'
+import { useRoute } from 'vitepress'
 import './style.css'
 import Layout from './Layout.vue'
 
@@ -26,7 +25,7 @@ import PaywallBlock from './components/PaywallBlock.vue'
 export default {
   extends: DefaultTheme,
   Layout,
-  enhanceApp({ app, router }) {
+  enhanceApp({ app }) {
     app.use(ElementPlus)
 
     // 核心 UI
@@ -63,30 +62,7 @@ export default {
       }
     }
 
-    const initTypewriter = () => {
-      const { frontmatter } = useData ? useData() : {}
-      const taglines = frontmatter?.value?.typingTagline
-      const el = document.querySelector('.VPHero .tagline')
-      if (!el || !Array.isArray(taglines) || taglines.length === 0) return
-      el.innerHTML = ''
-      new TypeIt(el, {
-        speed: 60,
-        deleteSpeed: 30,
-        loop: true,
-        waitUntilVisible: true
-      })
-        .pause(600)
-        .exec(function () {
-          taglines.forEach((line, i) => {
-            if (i < taglines.length - 1) {
-              this.type(line).pause(1200).delete()
-            } else {
-              this.type(line).pause(2000).delete()
-            }
-          })
-        })
-        .go()
-    }
+
 
     app.mixin({
       setup() {
@@ -98,10 +74,11 @@ export default {
 
         watch(
           () => route.path,
-          () => nextTick(() => {
+          async () => {
+            await nextTick()
             if (viewer) { viewer.destroy(); viewer = null }
             initViewer()
-          })
+          }
         )
 
         onBeforeUnmount(() => {
