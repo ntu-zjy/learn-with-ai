@@ -1,6 +1,21 @@
 import DefaultTheme from 'vitepress/theme'
-import ElementPlus from 'element-plus'
-import 'element-plus/dist/index.css'
+import {
+  ElAlert, ElButton, ElTag, ElIcon,
+  ElSteps, ElStep,
+  ElDropdown, ElDropdownMenu, ElDropdownItem,
+  ElMessage,
+} from 'element-plus'
+// 仅加载用到的组件 CSS（比全量 element-plus/dist/index.css 小 ~85%）
+import 'element-plus/theme-chalk/el-alert.css'
+import 'element-plus/theme-chalk/el-button.css'
+import 'element-plus/theme-chalk/el-tag.css'
+import 'element-plus/theme-chalk/el-icon.css'
+import 'element-plus/theme-chalk/el-step.css'
+import 'element-plus/theme-chalk/el-steps.css'
+import 'element-plus/theme-chalk/el-dropdown.css'
+import 'element-plus/theme-chalk/el-dropdown-menu.css'
+import 'element-plus/theme-chalk/el-dropdown-item.css'
+import 'element-plus/theme-chalk/base.css'
 import Viewer from 'viewerjs'
 import 'viewerjs/dist/viewer.css'
 import { onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
@@ -31,7 +46,17 @@ export default {
   extends: DefaultTheme,
   Layout,
   enhanceApp({ app }) {
-    app.use(ElementPlus)
+    // Element Plus 按需注册（只注册实际用到的组件）
+    app.component('ElAlert', ElAlert)
+    app.component('ElButton', ElButton)
+    app.component('ElTag', ElTag)
+    app.component('ElIcon', ElIcon)
+    app.component('ElSteps', ElSteps)
+    app.component('ElStep', ElStep)
+    app.component('ElDropdown', ElDropdown)
+    app.component('ElDropdownMenu', ElDropdownMenu)
+    app.component('ElDropdownItem', ElDropdownItem)
+    app.config.globalProperties.$message = ElMessage
 
     // 核心 UI
     app.component('HomeFeatures', HomeFeatures)
