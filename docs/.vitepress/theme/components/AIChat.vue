@@ -1,5 +1,5 @@
 <script setup>
-import { ref, nextTick } from 'vue'
+import { ref, nextTick, onMounted } from 'vue'
 
 const props = defineProps({
   systemPrompt: { type: String, default: '' },
@@ -13,9 +13,27 @@ const messages = ref([])
 const input = ref('')
 const loading = ref(false)
 const error = ref('')
-const apiKey = ref(localStorage.getItem('openrouter_key') || '')
-const showKeyInput = ref(!apiKey.value)
+// 用户自备 Key（兜底）
+const apiKey = ref('')
+const showKeyInput = ref(false)
+// 是否使用服务端代理（有 OPENROUTER_API_KEY 环境变量时为 true）
+const useProxy = ref(false)
 const chatContainer = ref(null)
+
+onMounted(async () => {
+  // 探测后端代理是否可用
+  try {
+    const r = await fetch('/api/health')
+    if (r.ok) {
+      // 代理可用，不需要用户填 Key
+      useProxy.value = true
+      return
+    }
+  } catch (_e) { /* ignore */ }
+  // 代理不可用，回退到用户 Key
+  apiKey.value = localStorage.getItem('openrouter_key') || ''
+  showKeyInput.value = !apiKey.value
+})
 
 const scrollToBottom = async () => {
   await nextTick()
@@ -40,7 +58,7 @@ const sendMessage = async () => {
   const text = input.value.trim()
   if (!text || loading.value) return
 
-  if (!apiKey.value) {
+  if (!useProxy.value && !apiKey.value) {
     showKeyInput.value = true
     return
   }
@@ -55,21 +73,25 @@ const sendMessage = async () => {
     ? [{ role: 'system', content: props.systemPrompt }]
     : []
 
+  const payload = {
+    messages: [...sysMessages, ...messages.value],
+    stream: true,
+  }
+
+  // 走后端代理时不传 model（由服务端读环境变量决定）
+  // 走用户 Key 时带上 model
+  const fetchUrl = useProxy.value ? '/api/chat' : 'https://openrouter.ai/api/v1/chat/completions'
+  const headers = { 'Content-Type': 'application/json' }
+
+  if (!useProxy.value) {
+    payload.model = 'deepseek/deepseek-chat-v3-0324:free'
+    headers['Authorization'] = `Bearer ${apiKey.value}`
+    headers['HTTP-Referer'] = window.location.origin
+    headers['X-Title'] = 'Learn With AI'
+  }
+
   try {
-    const resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey.value}`,
-        'Content-Type': 'application/json',
-        'HTTP-Referer': window.location.origin,
-        'X-Title': 'Learn With AI',
-      },
-      body: JSON.stringify({
-        model: 'deepseek/deepseek-chat-v3-0324:free',
-        messages: [...sysMessages, ...messages.value],
-        stream: true,
-      }),
-    })
+    const resp = await fetch(fetchUrl, { method: 'POST', headers, body: JSON.stringify(payload) })
 
     if (!resp.ok) {
       const data = await resp.json().catch(() => ({}))
@@ -106,7 +128,7 @@ const sendMessage = async () => {
     }
   } catch (e) {
     error.value = e.message || '网络错误，请稍后重试'
-    if (e.message?.includes('401') || e.message?.includes('403')) {
+    if (!useProxy.value && (e.message?.includes('401') || e.message?.includes('403'))) {
       showKeyInput.value = true
     }
     messages.value.pop()
@@ -138,13 +160,13 @@ const onKeydown = (e) => {
       </div>
       <div class="chat-actions">
         <button v-if="messages.length" class="action-btn" @click="clearChat">清空对话</button>
-        <button class="action-btn" @click="showKeyInput = !showKeyInput">
+        <button v-if="!useProxy" class="action-btn" @click="showKeyInput = !showKeyInput">
           {{ apiKey ? '更换 API Key' : '配置 API Key' }}
         </button>
       </div>
     </div>
 
-    <div v-if="showKeyInput" class="key-panel">
+    <div v-if="!useProxy && showKeyInput" class="key-panel">
       <p class="key-tip">
         需要 <a href="https://openrouter.ai/keys" target="_blank">OpenRouter API Key</a>（免费注册，DeepSeek 模型免费使用）
       </p>

@@ -86,6 +86,7 @@ async function handleRequest(req, res) {
   if (pathname === '/api/pay/create' && req.method === 'POST') return createPayment(req, res)
   if (pathname === '/api/pay/notify' && (req.method === 'GET' || req.method === 'POST')) return zpayNotify(req, res, url)
   if (pathname === '/api/pay/mock-callback' && req.method === 'GET') return mockPaymentCallback(req, res, url)
+  if (pathname === '/api/chat' && req.method === 'POST') return proxyChat(req, res)
 
   if (pathname.startsWith('/api/')) return sendJson(res, 404, { error: '接口不存在' })
 
@@ -529,6 +530,64 @@ function normalizePayType(payType) {
 
 function normalizePathname(pathname) {
   return pathname.replace(/\/{2,}/g, '/')
+}
+
+async function proxyChat(req, res) {
+  const apiKey = process.env.OPENROUTER_API_KEY
+  const model = process.env.OPENROUTER_MODEL || 'deepseek/deepseek-chat-v3-0324:free'
+
+  if (!apiKey) {
+    return sendJson(res, 503, { error: 'AI 服务未配置，请联系管理员' })
+  }
+
+  let body
+  try {
+    body = await readText(req)
+  } catch {
+    return sendJson(res, 400, { error: '请求格式错误' })
+  }
+
+  const payload = JSON.parse(body)
+  const stream = payload.stream !== false
+
+  const upstream = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+      'HTTP-Referer': siteUrl,
+      'X-Title': 'Learn With AI',
+    },
+    body: JSON.stringify({ ...payload, model, stream }),
+  })
+
+  if (!upstream.ok) {
+    const text = await upstream.text()
+    res.writeHead(upstream.status, { 'Content-Type': 'application/json' })
+    res.end(text)
+    return
+  }
+
+  if (stream) {
+    res.writeHead(200, {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive',
+      'Access-Control-Allow-Origin': '*',
+    })
+    upstream.body.pipeTo(new WritableStream({
+      write(chunk) { res.write(chunk) },
+      close() { res.end() },
+      abort(err) { console.error('[proxyChat] stream abort', err); res.end() },
+    }))
+  } else {
+    const data = await upstream.text()
+    res.writeHead(200, {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+    })
+    res.end(data)
+  }
 }
 
 function stripTrailingSlash(value) {
