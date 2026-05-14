@@ -11,7 +11,7 @@ const staticDir = resolve(process.env.STATIC_DIR || join(rootDir, 'docs/.vitepre
 const dataDir = resolve(process.env.DATA_DIR || join(rootDir, '.data'))
 const port = Number(process.env.PORT || 80)
 
-const siteUrl = stripTrailingSlash(process.env.SITE_URL || process.env.PUBLIC_SITE_URL || `http://localhost:${port}`)
+const siteUrl = normalizeSiteUrl(process.env.SITE_URL || process.env.PUBLIC_SITE_URL || `http://localhost:${port}`)
 const jwtSecret = process.env.AUTH_SECRET || process.env.JWT_SECRET || 'learn-with-ai-dev-secret-change-me'
 const tokenTtlDays = Number(process.env.AUTH_TOKEN_TTL_DAYS || 30)
 const zpayPid = process.env.ZPAY_PID || ''
@@ -533,6 +533,13 @@ function normalizePathname(pathname) {
 
 function stripTrailingSlash(value) {
   return String(value).replace(/\/$/, '')
+}
+
+function normalizeSiteUrl(value) {
+  const raw = stripTrailingSlash(value || '')
+  if (!raw) return `http://localhost:${port}`
+  if (/^https?:\/\//i.test(raw)) return raw
+  return `https://${raw}`
 }
 
 function randomId(bytes = 12) {

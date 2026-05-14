@@ -58,8 +58,8 @@ Dockerfile 中已设置 `ENV SEALOS=1`，构建时自动使用生产 base 路径
 
 | 环境变量 | 说明 |
 |---------|------|
-| `AUTH_SECRET` | 登录 token 签名密钥，生产环境必须设置为足够长的随机字符串 |
-| `SITE_URL` | SealOS 外网域名，例如 `https://xxx.cloud.sealos.io` |
+| `AUTH_SECRET` | 登录 token 签名密钥，生产环境必须设置为足够长的随机字符串；保持稳定，修改后用户需要重新登录 |
+| `SITE_URL` | SealOS 外网完整 URL，例如 `https://xxx.cloud.sealos.io`，不要只填裸域名 |
 | `DATA_DIR` | 数据持久化目录，默认 `/data` |
 | `ZPAY_PID` | ZPAY 商户 PID |
 | `ZPAY_KEY` | ZPAY 商户密钥 |
