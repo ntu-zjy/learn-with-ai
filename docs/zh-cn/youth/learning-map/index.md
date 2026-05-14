@@ -56,6 +56,8 @@ AI 可以帮助学生理解和修改，但不应该直接代写作业、替代�
 
 如果你从未用 AI 学习，先完成免费入门的 [第一次 AI 对话实验](/zh-cn/free/first-conversation/)，再进入 [如何向 AI 提出好问题](/zh-cn/youth/ask-better/)。
 
+<DeepPracticeWorkshop chapter="youth/learning-map" />
+
 ---
 
 **下一节** → [用 AI 写更好的作文](/zh-cn/youth/ai-writing/)

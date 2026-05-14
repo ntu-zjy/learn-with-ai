@@ -77,6 +77,8 @@ AI 翻译工具会怎样影响初中生学习英语的方式？
 
 选择一个你感兴趣的主题，让 AI 帮你生成 10 个研究问题。选其中一个，完成“研究问题、资料来源、调查对象、最终展示形式”四项规划。
 
+<DeepPracticeWorkshop chapter="youth/project-research" />
+
 </PaywallBlock>
 
 ---

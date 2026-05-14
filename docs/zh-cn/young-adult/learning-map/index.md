@@ -44,6 +44,8 @@ description: 面向大学生、考研党、求职者和职场新人的 AI 成长
 不要同时追太多方向。先选一个真实目标：考研、求职、论文、技能升级，围绕它跑完整个“计划-执行-反馈-复盘”循环。
 :::
 
+<DeepPracticeWorkshop chapter="young-adult/learning-map" />
+
 ---
 
 **下一节** → [Prompt 思维精讲](/zh-cn/young-adult/prompt-thinking/)

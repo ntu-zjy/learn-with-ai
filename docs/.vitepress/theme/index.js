@@ -23,6 +23,9 @@ import PromptLab from './components/PromptLab.vue'
 import PaywallBlock from './components/PaywallBlock.vue'
 import AccountCenter from './components/AccountCenter.vue'
 import AuthForm from './components/AuthForm.vue'
+import DeepPracticeWorkshop from './components/DeepPracticeWorkshop.vue'
+import AIChat from './components/AIChat.vue'
+import ConversationAnimator from './components/ConversationAnimator.vue'
 
 export default {
   extends: DefaultTheme,
@@ -45,6 +48,9 @@ export default {
     app.component('PaywallBlock', PaywallBlock)
     app.component('AccountCenter', AccountCenter)
     app.component('AuthForm', AuthForm)
+    app.component('DeepPracticeWorkshop', DeepPracticeWorkshop)
+    app.component('AIChat', AIChat)
+    app.component('ConversationAnimator', ConversationAnimator)
 
     // Viewer.js + TypeIt 初始化
     let viewer = null
