@@ -1,119 +1,109 @@
-# 🚀 部署说明
+# 部署说明
 
-## Base 路径自动适配
+## 架构概览
 
-本项目的 VitePress 配置已经正确处理了 **Vercel** 和 **GitHub Pages** 两种部署环境的不同 base 路径。
+```
+代码推送（main 分支）
+    ↓
+GitHub Actions (.github/workflows/deploy.yml)
+    ↓
+Docker 多阶段构建
+  阶段 1：node:20-alpine 构建 VitePress 静态文件
+  阶段 2：nginx:alpine 托管静态文件
+    ↓
+推送镜像到 Docker Hub
+  jingyuanzzz/learn-with-ai:latest
+  jingyuanzzz/learn-with-ai:<commit-sha>
+    ↓
+SealOS 新加坡区 App Launchpad 部署（手动触发重新部署）
+```
 
-### 自动适配逻辑
+## Base 路径适配
+
+VitePress 的 base 路径根据环境变量自动切换：
 
 ```javascript
 // docs/.vitepress/config.mjs
-const isVercel = process.env.VERCEL === '1'
-const base = isVercel ? '/' : '/easy-vibe/'
+const isSealOS = process.env.SEALOS === '1'
+const base = isSealOS ? '/learn-with-ai/' : '/'
 ```
 
-### 部署环境对比
+| 环境 | Base 路径 | 访问地址示例 |
+|------|----------|------------|
+| SealOS 生产 | `/learn-with-ai/` | `https://your-domain/learn-with-ai/zh-cn/` |
+| 本地开发 | `/` | `http://localhost:5173/zh-cn/` |
+| 本地预览 | `/` | `http://localhost:4173/zh-cn/` |
 
-| 平台             | Base 路径     | 示例 URL                                                    |
-| ---------------- | ------------- | ----------------------------------------------------------- |
-| **Vercel**       | `/`           | `https://your-project.vercel.app/cn/stage-1/...`            |
-| **GitHub Pages** | `/easy-vibe/` | `https://datawhalechina.github.io/easy-vibe/cn/stage-1/...` |
-| **本地开发**     | `/easy-vibe/` | `http://localhost:5173/easy-vibe/cn/stage-1/...`            |
-| **本地预览**     | `/easy-vibe/` | `http://localhost:4173/easy-vibe/cn/stage-1/...`            |
+Dockerfile 中已设置 `ENV SEALOS=1`，构建时自动使用生产 base 路径。
 
-### 首页动态链接
+## SealOS 初次部署
 
-首页使用 VitePress 的 `useData()` API 来动态获取 base 路径：
+1. 登录 [cloud.sealos.io](https://cloud.sealos.io)，切换到**新加坡区**
+2. 打开 **App Launchpad** → 点击「新建应用」
+3. 填写以下配置：
 
-```vue
-<script setup>
-import { useData } from 'vitepress'
+| 字段 | 值 |
+|------|---|
+| 应用名称 | `learn-with-ai` |
+| 镜像 | `jingyuanzzz/learn-with-ai:latest` |
+| CPU | 0.1 核 |
+| 内存 | 128 MB |
+| 副本数 | 1 |
+| 容器端口 | `80` |
+| 开放外网访问 | 开启，端口 `80` |
 
-const { site } = useData()
-const base = site.value.base
-</script>
+4. 点击「部署」，等待 Pod 变为 Running 状态
+5. 复制 SealOS 分配的域名（格式为 `*.cloud.sealos.io`）
 
-<template>
-  <a :href="base + 'cn/stage-1/learning-map/'">
-    <!-- 链接会自动适配部署环境 -->
-  </a>
-</template>
+## 更新部署
+
+每次推送 main 分支后，GitHub Actions 自动更新镜像。然后：
+
+1. 进入 SealOS App Launchpad → 找到 `learn-with-ai` 应用
+2. 点击「重新部署」（或修改镜像 Tag 为最新 commit SHA）
+3. 等待新 Pod 启动完成
+
+## GitHub Actions 配置
+
+`.github/workflows/deploy.yml` 使用以下 Secret，需在 GitHub 仓库设置中配置：
+
+| Secret 名称 | 值 |
+|------------|---|
+| `DOCKER_PASSWORD` | Docker Hub 账号 `jingyuanzzz` 的密码或 Access Token |
+
+设置路径：GitHub 仓库 → Settings → Secrets and variables → Actions → New repository secret
+
+## 本地构建测试
+
+```bash
+# 模拟 SealOS 生产环境构建
+SEALOS=1 npm run build
+
+# 或直接构建 Docker 镜像
+docker build -t learn-with-ai:local .
+
+# 本地运行容器验证
+docker run -p 8080:80 learn-with-ai:local
+# 访问 http://localhost:8080/learn-with-ai/
 ```
-
-**优点**：
-
-- ✅ 无需硬编码 fallback 值
-- ✅ 自动适配 Vercel 和 GitHub Pages
-- ✅ 构建时和运行时都正确
-
-## 部署步骤
-
-### Vercel 部署
-
-1. 推送代码到 GitHub
-2. Vercel 会自动检测 `vercel.json` 配置
-3. 自动构建并部署
-4. 访问 `https://your-project.vercel.app`
-
-**环境变量**：Vercel 自动设置 `VERCEL=1`
-
-### GitHub Pages 部署
-
-1. 配置 GitHub Pages 设置：
-   - Source: `gh-pages` 分支
-   - 或使用 GitHub Actions 从 `main` 分支部署
-
-2. 构建命令：
-
-   ```bash
-   npm run build
-   ```
-
-3. 访问 `https://datawhalechina.github.io/easy-vibe`
-
-## 验证部署
-
-部署后检查以下链接是否正常：
-
-- [ ] 首页能正常访问
-- [ ] 导航栏链接能正确跳转
-- [ ] 首页卡片"查看详情"链接正确
-- [ ] 语言切换功能正常
-- [ ] 图片资源能正常加载
 
 ## 常见问题
 
-### Q: Vercel 部署后链接变成 `/easy-vibe/cn/...` 导致 404
+### 页面 404 / 样式丢失
 
-**原因**：Vercel 环境变量未正确设置
+**原因**：base 路径不匹配。
 
-**解决**：
+**排查**：检查访问 URL 是否包含 `/learn-with-ai/` 前缀。生产环境必须有此前缀，本地开发不需要。
 
-1. 检查 Vercel 项目设置中 `Environment Variables`
-2. 确保 `VERCEL` = `1` 已设置（通常自动设置）
-3. 重新部署
+### GitHub Actions 构建失败
 
-### Q: GitHub Pages 部署后所有链接 404
+**排查步骤**：
+1. 检查 `DOCKER_PASSWORD` Secret 是否正确设置
+2. 查看 Actions 日志中的具体报错（通常是 ESLint error 或 rollup 构建失败）
+3. 本地运行 `npm run build` 复现错误
 
-**原因**：缺少 `/easy-vibe/` base 路径
+### VitePress 构建报 rollup 模块解析错误
 
-**解决**：
+**原因**：Vue 组件中存在对不存在文件的 import。
 
-1. 检查 `docs/.vitepress/config.mjs` 中的 base 配置
-2. 确保 GitHub Pages 环境下 `isVercel = false`
-3. 重新构建并部署
-
-### Q: 本地预览链接缺少 `/easy-vibe/` 前缀
-
-**原因**：使用了错误的预览命令
-
-**解决**：
-
-```bash
-# 错误
-npm run preview  # 默认端口 4173，但路径可能不对
-
-# 正确
-npm run build
-npm run preview  # 访问 http://localhost:4173/easy-vibe/
-```
+**解决**：检查所有 `import` 语句，确保被引用的文件实际存在。
