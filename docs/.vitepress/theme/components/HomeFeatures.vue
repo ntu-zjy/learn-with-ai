@@ -84,7 +84,6 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { withBase } from 'vitepress'
 
 const activeAudience = ref('youth')
 
