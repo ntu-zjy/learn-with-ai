@@ -113,17 +113,25 @@ const sendMessage = async () => {
       const lines = buffer.split('\n')
       buffer = lines.pop()
       for (const line of lines) {
+        // SSE error event（OpenRouter 有时通过这个传错误）
+        if (line.startsWith('event: error')) continue
         if (!line.startsWith('data: ')) continue
         const data = line.slice(6).trim()
         if (data === '[DONE]') continue
         try {
           const chunk = JSON.parse(data)
+          // OpenRouter 在流中返回的错误
+          if (chunk.error) {
+            throw new Error(chunk.error.message || '模型返回错误，请重试')
+          }
           const delta = chunk.choices?.[0]?.delta?.content
           if (delta) {
             messages.value[lastIdx].content += delta
             await scrollToBottom()
           }
-        } catch (_e) { /* ignore malformed SSE chunks */ }
+        } catch (_e) {
+          if (_e.message && !_e.message.includes('JSON')) throw _e
+        }
       }
     }
   } catch (e) {

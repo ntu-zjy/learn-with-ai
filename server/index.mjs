@@ -547,46 +547,59 @@ async function proxyChat(req, res) {
     return sendJson(res, 400, { error: '请求格式错误' })
   }
 
-  const payload = JSON.parse(body)
-  const stream = payload.stream !== false
-
-  const upstream = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-      'HTTP-Referer': siteUrl,
-      'X-Title': 'Learn With AI',
-    },
-    body: JSON.stringify({ ...payload, model, stream }),
-  })
-
-  if (!upstream.ok) {
-    const text = await upstream.text()
-    res.writeHead(upstream.status, { 'Content-Type': 'application/json' })
-    res.end(text)
-    return
+  let payload
+  try {
+    payload = JSON.parse(body)
+  } catch {
+    return sendJson(res, 400, { error: '请求格式错误' })
   }
 
-  if (stream) {
-    res.writeHead(200, {
-      'Content-Type': 'text/event-stream',
-      'Cache-Control': 'no-cache',
-      'Connection': 'keep-alive',
-      'Access-Control-Allow-Origin': '*',
+  let upstream
+  try {
+    upstream = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+        'HTTP-Referer': siteUrl,
+        'X-Title': 'Learn With AI',
+      },
+      body: JSON.stringify({ ...payload, model, stream: true }),
     })
-    upstream.body.pipeTo(new WritableStream({
-      write(chunk) { res.write(chunk) },
-      close() { res.end() },
-      abort(err) { console.error('[proxyChat] stream abort', err); res.end() },
-    }))
-  } else {
-    const data = await upstream.text()
-    res.writeHead(200, {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
-    })
-    res.end(data)
+  } catch (e) {
+    console.error('[proxyChat] upstream fetch error:', e)
+    return sendJson(res, 502, { error: 'AI 服务连接失败，请稍后重试' })
+  }
+
+  if (!upstream.ok) {
+    const text = await upstream.text().catch(() => '')
+    console.error('[proxyChat] upstream error', upstream.status, text)
+    let msg = `AI 服务错误 (${upstream.status})`
+    try {
+      const parsed = JSON.parse(text)
+      msg = parsed.error?.message || parsed.message || msg
+    } catch { /* ignore */ }
+    return sendJson(res, upstream.status >= 500 ? 502 : upstream.status, { error: msg })
+  }
+
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    'Connection': 'keep-alive',
+    'Access-Control-Allow-Origin': '*',
+  })
+
+  const reader = upstream.body.getReader()
+  try {
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) break
+      res.write(value)
+    }
+  } catch (e) {
+    console.error('[proxyChat] stream read error:', e)
+  } finally {
+    res.end()
   }
 }
 
