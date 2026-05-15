@@ -1,3 +1,9 @@
+/* 首页落地页：去掉 VitePress layout:page 的内容容器宽度限制 */
+.VPPage .lp-root {
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+}
+
 :root {
   /* Easy-Vibe Theme Fix v2025-01-12 */
   /* 通过变量控制分组底部留白（默认 24px） */

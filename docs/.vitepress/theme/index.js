@@ -41,6 +41,7 @@ import AuthForm from './components/AuthForm.vue'
 import DeepPracticeWorkshop from './components/DeepPracticeWorkshop.vue'
 import AIChat from './components/AIChat.vue'
 import ConversationAnimator from './components/ConversationAnimator.vue'
+import LandingPage from './components/LandingPage.vue'
 
 export default {
   extends: DefaultTheme,
@@ -76,6 +77,7 @@ export default {
     app.component('DeepPracticeWorkshop', DeepPracticeWorkshop)
     app.component('AIChat', AIChat)
     app.component('ConversationAnimator', ConversationAnimator)
+    app.component('LandingPage', LandingPage)
 
     // Viewer.js + TypeIt 初始化
     let viewer = null
