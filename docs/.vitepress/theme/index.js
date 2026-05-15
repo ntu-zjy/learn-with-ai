@@ -42,6 +42,7 @@ import DeepPracticeWorkshop from './components/DeepPracticeWorkshop.vue'
 import AIChat from './components/AIChat.vue'
 import ConversationAnimator from './components/ConversationAnimator.vue'
 import LandingPage from './components/LandingPage.vue'
+import SvgIcon from './components/SvgIcon.vue'
 
 export default {
   extends: DefaultTheme,
@@ -78,6 +79,7 @@ export default {
     app.component('AIChat', AIChat)
     app.component('ConversationAnimator', ConversationAnimator)
     app.component('LandingPage', LandingPage)
+    app.component('SvgIcon', SvgIcon)
 
     // Viewer.js + TypeIt 初始化
     let viewer = null

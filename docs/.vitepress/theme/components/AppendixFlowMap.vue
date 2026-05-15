@@ -1,12 +1,13 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { withBase } from 'vitepress'
+import SvgIcon from './SvgIcon.vue'
 
 const categories = [
   {
     id: 'computer-fundamentals',
     name: '计算机基础',
-    icon: '💻',
+    icon: 'monitor',
     color: '#10b981',
     bgGradient: 'linear-gradient(135deg, #10b98115, #10b98108)',
     description: '理解计算机最底层的工作原理',
@@ -25,7 +26,7 @@ const categories = [
   {
     id: 'development-tools',
     name: '开发工具',
-    icon: '🔧',
+    icon: 'tool',
     color: '#3b82f6',
     bgGradient: 'linear-gradient(135deg, #3b82f615, #3b82f608)',
     description: '熟练使用命令行、Git、IDE 等工具',
@@ -43,7 +44,7 @@ const categories = [
   {
     id: 'browser-frontend',
     name: '浏览器与前端',
-    icon: '🌍',
+    icon: 'globe',
     color: '#f59e0b',
     bgGradient: 'linear-gradient(135deg, #f59e0b15, #f59e0b08)',
     description: '掌握浏览器原理和前端开发技术',
@@ -61,7 +62,7 @@ const categories = [
   {
     id: 'server-backend',
     name: '服务端与后端',
-    icon: '⚙️',
+    icon: 'settings',
     color: '#8b5cf6',
     bgGradient: 'linear-gradient(135deg, #8b5cf615, #8b5cf608)',
     description: '构建可靠的后端服务和 API',
@@ -80,7 +81,7 @@ const categories = [
   {
     id: 'data',
     name: '数据',
-    icon: '📊',
+    icon: 'bar-chart',
     color: '#ec4899',
     bgGradient: 'linear-gradient(135deg, #ec489915, #ec489908)',
     description: '掌握数据库和数据分析技能',
@@ -96,7 +97,7 @@ const categories = [
   {
     id: 'architecture',
     name: '架构设计',
-    icon: '🏗️',
+    icon: 'layers',
     color: '#14b8a6',
     bgGradient: 'linear-gradient(135deg, #14b8a615, #14b8a608)',
     description: '学习系统设计和架构模式',
@@ -112,7 +113,7 @@ const categories = [
   {
     id: 'infrastructure',
     name: '基础设施',
-    icon: '☁️',
+    icon: 'cloud',
     color: '#06b6d4',
     bgGradient: 'linear-gradient(135deg, #06b6d415, #06b6d408)',
     description: '掌握云原生和运维技能',
@@ -128,7 +129,7 @@ const categories = [
   {
     id: 'ai',
     name: '人工智能',
-    icon: '🤖',
+    icon: 'robot',
     color: '#f97316',
     bgGradient: 'linear-gradient(135deg, #f9731615, #f9731608)',
     description: '了解 AI 原理和 LLM 应用开发',
@@ -146,7 +147,7 @@ const categories = [
   {
     id: 'engineering',
     name: '工程素养',
-    icon: '✨',
+    icon: 'sparkles',
     color: '#a855f7',
     bgGradient: 'linear-gradient(135deg, #a855f715, #a855f708)',
     description: '提升代码质量和工程实践能力',
@@ -205,7 +206,7 @@ const hoveredArticleData = computed(() => {
             }"
             @click="toggleCategory(category.id)"
           >
-            <div class="card-icon">{{ category.icon }}</div>
+            <div class="card-icon"><SvgIcon :name="category.icon" :size="24" /></div>
             <div class="card-content">
               <h4 class="card-title">{{ category.name }}</h4>
             </div>
@@ -224,7 +225,7 @@ const hoveredArticleData = computed(() => {
       >
         <div class="panel-header">
           <div class="panel-title-row">
-            <span class="panel-icon">{{ hoveredArticleData ? '📄' : activeCategoryData.icon }}</span>
+            <SvgIcon :name="hoveredArticleData ? 'file' : activeCategoryData.icon" :size="28" class="panel-icon" />
             <div class="panel-title-group">
               <h4 class="panel-title">{{ hoveredArticleData?.title || activeCategoryData.name }}</h4>
               <p class="panel-desc">{{ hoveredArticleData?.description || activeCategoryData.description }}</p>
@@ -245,7 +246,7 @@ const hoveredArticleData = computed(() => {
 
         <div class="panel-articles">
           <div class="articles-header">
-            <span class="articles-icon">{{ activeCategoryData.icon }}</span>
+            <SvgIcon :name="activeCategoryData.icon" :size="18" class="articles-icon" />
             <span class="articles-title">文章列表 ({{ activeCategoryData.articles.length }}篇)</span>
           </div>
           <div class="articles-list-scroll">

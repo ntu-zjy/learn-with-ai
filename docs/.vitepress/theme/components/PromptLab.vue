@@ -45,7 +45,7 @@
     </div>
 
     <div class="lab-tip">
-      <span class="tip-icon">💡</span>
+      <SvgIcon name="lightbulb" :size="16" class="tip-icon" />
       <span>{{ currentScenario.tip }}</span>
     </div>
 
@@ -63,6 +63,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import SvgIcon from './SvgIcon.vue'
 
 const activeScenario = ref('study')
 const copied = ref(false)

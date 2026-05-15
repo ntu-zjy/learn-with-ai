@@ -42,7 +42,7 @@
       >
         <div v-if="plan.badge" class="plan-badge">{{ plan.badge }}</div>
         <div class="plan-header">
-          <div class="plan-icon">{{ plan.icon }}</div>
+          <SvgIcon :name="plan.icon" :size="32" class="plan-icon" />
           <div class="plan-name">{{ plan.name }}</div>
           <div class="plan-tagline">{{ plan.tagline }}</div>
         </div>
@@ -85,6 +85,7 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { planLevel, useMembership } from '../composables/useMembership'
+import SvgIcon from './SvgIcon.vue'
 
 const billing = ref('yearly')
 const payType = ref('alipay')
@@ -95,7 +96,7 @@ const { membership, currentPlan, isAuthenticated, startCheckout, refreshMembersh
 const plans = [
   {
     id: 'free',
-    icon: '🌱',
+    icon: 'check-circle',
     name: '免费体验',
     tagline: '零门槛开始 AI 学习之旅',
     yearlyPrice: '¥0',
@@ -116,7 +117,7 @@ const plans = [
   },
   {
     id: 'basic',
-    icon: '🎒',
+    icon: 'school',
     name: '基础版',
     tagline: '青少年 + 青年入门专项',
     yearlyPrice: '¥99',
@@ -137,7 +138,7 @@ const plans = [
   },
   {
     id: 'pro',
-    icon: '🚀',
+    icon: 'rocket',
     name: '进阶版',
     tagline: '考研、求职、职业规划全覆盖',
     yearlyPrice: '¥299',
@@ -158,7 +159,7 @@ const plans = [
   },
   {
     id: 'premium',
-    icon: '💼',
+    icon: 'briefcase',
     name: '高级版',
     tagline: '商业洞察 + 投资决策 + 终身学习',
     yearlyPrice: '¥599',

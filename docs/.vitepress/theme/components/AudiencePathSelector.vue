@@ -8,7 +8,7 @@
         :href="a.link"
         class="selector-card"
       >
-        <span class="s-icon">{{ a.icon }}</span>
+        <SvgIcon :name="a.icon" :size="28" class="s-icon" />
         <span class="s-title">{{ a.title }}</span>
         <span class="s-desc">{{ a.desc }}</span>
         <span class="s-arrow">→</span>
@@ -18,24 +18,25 @@
 </template>
 
 <script setup>
+import SvgIcon from './SvgIcon.vue'
 const audiences = [
   {
     id: 'youth',
-    icon: '🎒',
+    icon: 'school',
     title: '青少年',
     desc: '6-18 岁，用 AI 学习提效',
     link: '/zh-cn/youth/learning-map/'
   },
   {
     id: 'young-adult',
-    icon: '🚀',
+    icon: 'rocket',
     title: '青年',
     desc: '18-35 岁，考研 / 求职 / 成长',
     link: '/zh-cn/young-adult/learning-map/'
   },
   {
     id: 'middle-aged',
-    icon: '💼',
+    icon: 'briefcase',
     title: '中年',
     desc: '35-55 岁，商业洞察 / 投资',
     link: '/zh-cn/middle-aged/learning-map/'

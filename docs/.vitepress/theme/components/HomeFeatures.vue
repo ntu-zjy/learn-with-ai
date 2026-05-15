@@ -11,7 +11,7 @@
           :class="{ active: activeAudience === a.id }"
           @click="activeAudience = a.id"
         >
-          <span class="audience-icon">{{ a.icon }}</span>
+          <SvgIcon :name="a.icon" :size="28" class="audience-icon" />
           <span class="audience-title">{{ a.title }}</span>
           <span class="audience-desc">{{ a.desc }}</span>
         </button>
@@ -23,7 +23,7 @@
       <transition name="fade" mode="out-in">
         <div :key="activeAudience" class="path-content">
           <div class="path-header">
-            <span class="path-icon">{{ currentAudience.icon }}</span>
+            <SvgIcon :name="currentAudience.icon" :size="40" class="path-icon" />
             <div>
               <div class="path-title">{{ currentAudience.pathTitle }}</div>
               <div class="path-subtitle">{{ currentAudience.pathSubtitle }}</div>
@@ -36,7 +36,7 @@
               class="path-module"
               :class="mod.locked ? 'locked' : 'free'"
             >
-              <span class="module-lock">{{ mod.locked ? '🔒' : '✅' }}</span>
+              <SvgIcon :name="mod.locked ? 'lock' : 'check-circle'" :size="16" class="module-lock" />
               <span class="module-text">{{ mod.text }}</span>
               <span v-if="!mod.locked" class="module-tag free-tag">免费</span>
               <span v-else class="module-tag paid-tag">{{ mod.plan }}</span>
@@ -52,7 +52,7 @@
       <div class="section-label">为什么选择我们</div>
       <div class="features-grid">
         <div v-for="f in features" :key="f.title" class="feature-card">
-          <span class="feature-icon">{{ f.icon }}</span>
+          <SvgIcon :name="f.icon" :size="28" class="feature-icon" />
           <div class="feature-title">{{ f.title }}</div>
           <div class="feature-desc">{{ f.desc }}</div>
         </div>
@@ -84,25 +84,26 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import SvgIcon from './SvgIcon.vue'
 
 const activeAudience = ref('youth')
 
 const audiences = [
   {
     id: 'youth',
-    icon: '🎒',
+    icon: 'school',
     title: '青少年',
     desc: '6-18 岁学生'
   },
   {
     id: 'young-adult',
-    icon: '🚀',
+    icon: 'rocket',
     title: '青年',
     desc: '18-35 岁'
   },
   {
     id: 'middle-aged',
-    icon: '💼',
+    icon: 'briefcase',
     title: '中年',
     desc: '35-55 岁'
   }
@@ -110,7 +111,7 @@ const audiences = [
 
 const audienceData = {
   youth: {
-    icon: '🎒',
+    icon: 'school',
     pathTitle: '青少年 AI 学习启蒙',
     pathSubtitle: '从用 AI 写作文，到培养 AI 原生思维',
     modules: [
@@ -125,7 +126,7 @@ const audienceData = {
     cta: { text: '开始青少年课程 →', link: '/zh-cn/youth/learning-map/' }
   },
   'young-adult': {
-    icon: '🚀',
+    icon: 'rocket',
     pathTitle: '青年 AI 驱动的成长',
     pathSubtitle: '考研、求职、职业规划——AI 全程加速',
     modules: [
@@ -140,7 +141,7 @@ const audienceData = {
     cta: { text: '开始青年课程 →', link: '/zh-cn/young-adult/learning-map/' }
   },
   'middle-aged': {
-    icon: '💼',
+    icon: 'briefcase',
     pathTitle: '中年 AI 商业洞察',
     pathSubtitle: '行业调研、投资分析、人生决策——AI 赋能',
     modules: [
@@ -160,22 +161,22 @@ const currentAudience = computed(() => audienceData[activeAudience.value])
 
 const features = [
   {
-    icon: '🎮',
+    icon: 'message-circle',
     title: 'AI 对话练习场',
     desc: '每节课末尾有真实 AI 交互练习，比看视频有效 10 倍'
   },
   {
-    icon: '🗺️',
+    icon: 'map',
     title: '人群专属路径',
     desc: '针对不同年龄和目标设计课程，不做一刀切的通用教程'
   },
   {
-    icon: '📋',
+    icon: 'clipboard-list',
     title: 'Prompt 模板库',
     desc: '每节课附带可一键复制的 Prompt，立刻产生实际价值'
   },
   {
-    icon: '📊',
+    icon: 'bar-chart',
     title: '可视化交互演示',
     desc: '抽象概念全部可视化，看得懂、记得住、用得上'
   }

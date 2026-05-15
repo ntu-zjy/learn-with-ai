@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import SvgIcon from './SvgIcon.vue'
 
 const activeAudience = ref('young-adult')
 const heroVisible = ref(false)
@@ -9,9 +10,9 @@ const count2 = ref(0)
 const count3 = ref(0)
 
 const audiences = [
-  { id: 'youth', emoji: '🎒', title: '青少年', sub: '6-18 岁' },
-  { id: 'young-adult', emoji: '🚀', title: '青年', sub: '18-35 岁' },
-  { id: 'middle-aged', emoji: '💼', title: '中年', sub: '35-55 岁' },
+  { id: 'youth', icon: 'school', title: '青少年', sub: '6-18 岁' },
+  { id: 'young-adult', icon: 'rocket', title: '青年', sub: '18-35 岁' },
+  { id: 'middle-aged', icon: 'briefcase', title: '中年', sub: '35-55 岁' },
 ]
 
 const audienceData = {
@@ -145,10 +146,10 @@ const plans = [
 ]
 
 const features = [
-  { icon: '🎮', title: 'AI 对话练习场', desc: '每节课末尾有真实 AI 交互练习，边学边练，比看视频有效 10 倍。' },
-  { icon: '🗺️', title: '人群专属路径', desc: '针对青少年、青年、中年三类人群独立设计，不做一刀切的通用教程。' },
-  { icon: '📋', title: 'Prompt 模板库', desc: '每节课附带可一键复制的 Prompt，学完即用，立刻产生实际价值。' },
-  { icon: '🎬', title: '可视化交互演示', desc: '抽象概念全部可视化，对话动画演示 AI 原理，看得懂、记得住、用得上。' },
+  { icon: 'message-circle', title: 'AI 对话练习场', desc: '每节课末尾有真实 AI 交互练习，边学边练，比看视频有效 10 倍。' },
+  { icon: 'map', title: '人群专属路径', desc: '针对青少年、青年、中年三类人群独立设计，不做一刀切的通用教程。' },
+  { icon: 'clipboard-list', title: 'Prompt 模板库', desc: '每节课附带可一键复制的 Prompt，学完即用，立刻产生实际价值。' },
+  { icon: 'play-circle', title: '可视化交互演示', desc: '抽象概念全部可视化，对话动画演示 AI 原理，看得懂、记得住、用得上。' },
 ]
 
 const testimonials = [
@@ -261,7 +262,7 @@ const testimonials = [
             :class="{ active: activeAudience === a.id }"
             @click="activeAudience = a.id"
           >
-            <span class="tab-emoji">{{ a.emoji }}</span>
+            <SvgIcon :name="a.icon" :size="22" class="tab-icon" />
             <span class="tab-title">{{ a.title }}</span>
             <span class="tab-sub">{{ a.sub }}</span>
           </button>
@@ -283,7 +284,7 @@ const testimonials = [
                 class="path-mod"
                 :class="mod.free ? 'free' : 'locked'"
               >
-                <span class="mod-icon">{{ mod.free ? '✅' : '🔒' }}</span>
+                <SvgIcon :name="mod.free ? 'check-circle' : 'lock'" :size="16" class="mod-icon" />
                 <span class="mod-text">{{ mod.text }}</span>
                 <span v-if="mod.free" class="mod-badge free">免费</span>
                 <span v-else class="mod-badge paid">{{ mod.plan }}</span>
@@ -301,7 +302,9 @@ const testimonials = [
         <h2 class="section-title">为什么学员说有效</h2>
         <div class="features-grid">
           <div v-for="f in features" :key="f.title" class="feature-card">
-            <div class="feature-icon-wrap">{{ f.icon }}</div>
+            <div class="feature-icon-wrap">
+              <SvgIcon :name="f.icon" :size="28" />
+            </div>
             <div class="feature-title">{{ f.title }}</div>
             <div class="feature-desc">{{ f.desc }}</div>
           </div>
@@ -801,8 +804,12 @@ const testimonials = [
   border-color: var(--vp-c-text-3);
 }
 
-.tab-emoji {
-  font-size: 24px;
+.tab-icon {
+  color: var(--vp-c-text-2);
+}
+
+.path-tab.active .tab-icon {
+  color: #0071e3;
 }
 
 .tab-title {
@@ -951,7 +958,14 @@ const testimonials = [
 }
 
 .feature-icon-wrap {
-  font-size: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(0, 113, 227, 0.1);
+  color: #0071e3;
   margin-bottom: 14px;
 }
 

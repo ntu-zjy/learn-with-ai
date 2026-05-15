@@ -82,3 +82,29 @@ pre-commit hook 会自动运行 ESLint + build 检查，确保：
 - VitePress 2.0.0-alpha.16（不要升级，alpha 版本 API 可能破坏性变更）
 - 空 Vue 组件模板写 `<template><div /></template>`，不能写 `<template></template>`
 - CSS 用 `var(--vp-c-*)` 主题变量，不要硬编码颜色
+
+## 图标规范（全站强制执行）
+
+**禁止在任何网页组件中使用 Emoji 表情包作为图标。** 此规则适用于所有 Vue 组件和 Markdown 文件中的 UI 图标。
+
+所有视觉图标必须使用 `SvgIcon` 组件（内联 SVG，Lucide 风格，MIT 协议）：
+
+```vue
+<SvgIcon name="rocket" :size="24" />
+```
+
+该组件位于 `docs/.vitepress/theme/components/SvgIcon.vue`，已在 `index.js` 全局注册，无需在每个文件单独 import（但局部 import 也可以）。
+
+需要新图标时，在 `SvgIcon.vue` 的 `icons` 对象中添加条目，路径来自 [Lucide Icons](https://lucide.dev/)（MIT）。
+
+**不合规示例**（禁止）：
+
+```js
+icon: '🎒'  // Emoji 表情包，跨平台渲染不一致，禁止用作 UI 图标
+```
+
+**合规示例**：
+
+```js
+icon: 'school'  // 对应 SvgIcon.vue 中的 SVG 路径名
+```

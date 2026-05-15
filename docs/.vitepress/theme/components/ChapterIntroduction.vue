@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue'
+import SvgIcon from './SvgIcon.vue'
 import { useI18n } from '../composables/useI18n.js'
 import chapterIntroductionLocale from '../locales/chapter-introduction/index.js'
 
@@ -43,7 +44,7 @@ const hasTags = computed(() => props.tags && props.tags.length > 0)
     <!-- Learning Objective -->
     <div class="objective-section">
       <div class="objective-label">
-        <span class="icon">🎯</span>
+        <SvgIcon name="target" :size="16" class="icon" />
         <span class="title">{{ t('title') }}</span>
       </div>
       <div class="content">
