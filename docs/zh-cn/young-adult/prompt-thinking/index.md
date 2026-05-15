@@ -56,7 +56,7 @@ const convData = [
 
 <ClientOnly>
   <StepBar
-    :active="1"
+    :active="5"
     :items="[
       { title: '身份背景', description: '你是谁，处境是什么' },
       { title: '具体目标', description: '要解决什么问题' },

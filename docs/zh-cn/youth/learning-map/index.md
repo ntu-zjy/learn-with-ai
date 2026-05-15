@@ -13,7 +13,7 @@ description: 面向 6-18 岁学生的 AI 学习启蒙路径，从作业辅助到
 
 <ClientOnly>
   <StepBar
-    :active="1"
+    :active="0"
     :items="[
       { title: '会提问', description: '说清目标、基础和卡点' },
       { title: '会练习', description: '写作、数学、背诵分场景训练' },

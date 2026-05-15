@@ -13,7 +13,7 @@ description: 面向大学生、考研党、求职者和职场新人的 AI 成长
 
 <ClientOnly>
   <StepBar
-    :active="1"
+    :active="0"
     :items="[
       { title: '会表达任务', description: '掌握 Prompt 思维' },
       { title: '会拆目标', description: '制定学习计划与知识拆解' },

@@ -43,7 +43,7 @@ const convData = [
 
 <ClientOnly>
   <StepBar
-    :active="1"
+    :active="0"
     :items="[
       { title: '看懂行业', description: '建立行业结构和关键变量' },
       { title: '发现机会', description: '扫描需求、客户和商业模式' },
