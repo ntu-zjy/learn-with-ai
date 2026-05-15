@@ -37,7 +37,7 @@ AI 可以帮你把灵感变成待验证的机会清单，但不能替你完成�
   />
 </ClientOnly>
 
-<PaywallBlock title="商业机会扫描完整课程" plan="高级版或以上">
+<PaywallBlock title="商业机会扫描完整课程" plan="AI 掌控者或以上">
 
 ## 1. 机会筛选五问
 

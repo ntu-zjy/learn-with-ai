@@ -39,7 +39,7 @@ AI 可以帮助你学习框架、整理问题和模拟情景，但不能替你�
   />
 </ClientOnly>
 
-<PaywallBlock title="资产配置思考完整课程" plan="高级版或以上">
+<PaywallBlock title="资产配置思考完整课程" plan="AI 掌控者或以上">
 
 ## 1. 资产配置五个变量
 

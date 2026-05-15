@@ -38,7 +38,7 @@
         v-for="plan in plans"
         :key="plan.id"
         class="plan-card"
-        :class="{ highlight: plan.highlight, current: plan.id !== 'free' && hasPlanAccess(plan.id) }"
+        :class="{ highlight: plan.highlight, current: plan.id !== 'free' && hasPlanAccess(plan.id), offline: plan.id === 'offline' }"
       >
         <div v-if="plan.badge" class="plan-badge">{{ plan.badge }}</div>
         <div class="plan-header">
@@ -46,29 +46,49 @@
           <div class="plan-name">{{ plan.name }}</div>
           <div class="plan-tagline">{{ plan.tagline }}</div>
         </div>
-        <div class="plan-pricing">
-          <span class="plan-price">{{ billing === 'yearly' ? plan.yearlyPrice : plan.monthlyPrice }}</span>
-          <span class="plan-period">{{ billing === 'yearly' ? '/ 年' : '/ 月' }}</span>
-        </div>
-        <div v-if="billing === 'yearly' && plan.savings" class="plan-savings">
-          比月付节省 {{ plan.savings }}
-        </div>
+        <!-- 线下课程：不显示价格，显示联系方式 -->
+        <template v-if="plan.id === 'offline'">
+          <div class="plan-price-offline">面议 · 定制报价</div>
+          <div class="plan-locations">
+            <SvgIcon name="map-pin" :size="14" />
+            <span>{{ plan.locations.join(' · ') }}</span>
+          </div>
+        </template>
+        <template v-else>
+          <div class="plan-pricing">
+            <span class="plan-price">{{ billing === 'yearly' ? plan.yearlyPrice : plan.monthlyPrice }}</span>
+            <span class="plan-period">{{ billing === 'yearly' ? '/ 年' : '/ 月' }}</span>
+          </div>
+          <div v-if="billing === 'yearly' && plan.savings" class="plan-savings">
+            比月付节省 {{ plan.savings }}
+          </div>
+        </template>
         <ul class="plan-features">
           <li v-for="f in plan.features" :key="f.text" :class="f.included ? '' : 'excluded'">
             <span class="check">{{ f.included ? '✓' : '✗' }}</span>
             {{ f.text }}
           </li>
         </ul>
-        <button
-          class="plan-cta"
-          type="button"
-          :class="plan.highlight ? 'cta-primary' : 'cta-secondary'"
-          :disabled="plan.id !== 'free' && (membership.loading || hasPlanAccess(plan.id))"
-          @click="handlePlanClick(plan)"
-        >
-          {{ getCtaText(plan) }}
-        </button>
-        <div class="plan-audience">适合：{{ plan.audience }}</div>
+        <!-- 线下课程：微信咨询按钮 -->
+        <template v-if="plan.id === 'offline'">
+          <a :href="'https://work.weixin.qq.com/'" target="_blank" class="plan-cta cta-offline">
+            <SvgIcon name="message-circle" :size="16" />
+            加微信了解
+          </a>
+          <div class="plan-audience">北京 · 即将开放上海 / 深圳</div>
+        </template>
+        <template v-else>
+          <button
+            class="plan-cta"
+            type="button"
+            :class="plan.highlight ? 'cta-primary' : 'cta-secondary'"
+            :disabled="plan.id !== 'free' && (membership.loading || hasPlanAccess(plan.id))"
+            @click="handlePlanClick(plan)"
+          >
+            {{ getCtaText(plan) }}
+          </button>
+          <div class="plan-audience">适合：{{ plan.audience }}</div>
+        </template>
       </div>
     </div>
     <div class="faq-section">
@@ -118,64 +138,81 @@ const plans = [
   {
     id: 'basic',
     icon: 'school',
-    name: '基础版',
-    tagline: '青少年 + 青年入门专项',
+    name: 'AI 学习者',
+    tagline: '解锁全部基础课程，系统建立 AI 学习能力',
     yearlyPrice: '¥99',
     monthlyPrice: '¥14',
     savings: '约 ¥69',
     badge: null,
     highlight: false,
-    audience: '学生 / 家长',
-    cta: '订阅基础版',
+    audience: '所有人群',
+    cta: '订阅 AI 学习者',
     features: [
-      { text: '免费内容全部解锁', included: true },
-      { text: '青少年完整课程', included: true },
-      { text: '青年入门课程', included: true },
+      { text: '三个人群完整基础课程', included: true },
+      { text: 'AI 对话练习场（全部）', included: true },
       { text: 'Prompt 模板库（50 条）', included: true },
-      { text: '考研 / 求职专项', included: false },
-      { text: '商业洞察 / 投资专项', included: false }
+      { text: '深度专项课（考研/求职/商业）', included: false },
+      { text: '个人 AI 助手系统', included: false },
+      { text: '优先获取新课程', included: false }
     ]
   },
   {
     id: 'pro',
     icon: 'rocket',
-    name: '进阶版',
-    tagline: '考研、求职、职业规划全覆盖',
-    yearlyPrice: '¥299',
-    monthlyPrice: '¥39',
-    savings: '约 ¥169',
+    name: 'AI 实践者',
+    tagline: '深度专项课 + 完整模板库，让 AI 真正为你所用',
+    yearlyPrice: '¥399',
+    monthlyPrice: '¥49',
+    savings: '约 ¥189',
     badge: '最受欢迎',
     highlight: true,
-    audience: '18-35 岁青年',
-    cta: '订阅进阶版',
+    audience: '所有人群',
+    cta: '订阅 AI 实践者',
     features: [
-      { text: '基础版全部内容', included: true },
-      { text: '考研备考全流程', included: true },
-      { text: 'AI 面试模拟与复盘', included: true },
-      { text: '职业路径分析', included: true },
+      { text: 'AI 学习者全部内容', included: true },
+      { text: '考研备考 / 求职面试专项', included: true },
+      { text: '商业洞察 / 投资分析专项', included: true },
       { text: 'Prompt 模板库（200 条）', included: true },
-      { text: '商业洞察 / 投资专项', included: false }
+      { text: '个人 AI 助手系统', included: false },
+      { text: '优先获取新课程', included: false }
     ]
   },
   {
     id: 'premium',
-    icon: 'briefcase',
-    name: '高级版',
-    tagline: '商业洞察 + 投资决策 + 终身学习',
-    yearlyPrice: '¥599',
-    monthlyPrice: '¥79',
-    savings: '约 ¥349',
+    icon: 'sparkles',
+    name: 'AI 掌控者',
+    tagline: '全部内容 + AI 助手系统，成为 AI 时代的主动驾驭者',
+    yearlyPrice: '¥999',
+    monthlyPrice: '¥99',
+    savings: '约 ¥189',
     badge: null,
     highlight: false,
-    audience: '35-55 岁中年',
-    cta: '订阅高级版',
+    audience: '所有人群',
+    cta: '订阅 AI 掌控者',
     features: [
-      { text: '进阶版全部内容', included: true },
-      { text: '行业快速调研方法论', included: true },
-      { text: 'AI 辅助股票分析', included: true },
-      { text: '个人 AI 助手系统', included: true },
+      { text: 'AI 实践者全部内容', included: true },
+      { text: '个人 AI 助手系统搭建', included: true },
+      { text: 'AI 时代终身学习框架', included: true },
       { text: 'Prompt 模板库（500+ 条）', included: true },
-      { text: '优先新课程访问权', included: true }
+      { text: '优先获取新课程', included: true },
+      { text: '专属学习社群', included: true }
+    ]
+  },
+  {
+    id: 'offline',
+    icon: 'layers',
+    name: '线下课程',
+    tagline: '面对面深度学习，教练式辅导与实战演练',
+    locations: ['北京', '上海（即将）', '深圳（即将）'],
+    badge: null,
+    highlight: false,
+    features: [
+      { text: 'AI 掌控者全部线上内容', included: true },
+      { text: '小班制面授（≤12 人）', included: true },
+      { text: '专属教练一对一跟进', included: true },
+      { text: '企业定制课程方案', included: true },
+      { text: '结业证书', included: true },
+      { text: '终身校友社群', included: true }
     ]
   }
 ]
@@ -507,6 +544,50 @@ async function handlePlanClick(plan) {
   font-size: 11px;
   color: var(--vp-c-text-3);
   text-align: center;
+}
+
+/* 线下课程卡片 */
+.plan-card.offline {
+  border-color: #f59e0b;
+  background: linear-gradient(160deg, rgba(245,158,11,0.05), var(--vp-c-bg));
+}
+
+.plan-price-offline {
+  font-size: 20px;
+  font-weight: 800;
+  color: #f59e0b;
+  margin: 12px 0 6px;
+  text-align: center;
+}
+
+.plan-locations {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--vp-c-text-2);
+  margin-bottom: 8px;
+}
+
+.cta-offline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #f59e0b;
+  color: #fff;
+  font-weight: 700;
+  border-radius: 8px;
+  padding: 10px;
+  text-decoration: none;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.cta-offline:hover {
+  background: #d97706;
+  color: #fff;
 }
 
 /* FAQ */

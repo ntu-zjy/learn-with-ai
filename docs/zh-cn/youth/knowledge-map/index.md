@@ -41,7 +41,7 @@ const convData = [
   />
 </ClientOnly>
 
-<PaywallBlock title="知识脑图完整课程" plan="基础版或以上">
+<PaywallBlock title="知识脑图完整课程" plan="AI 学习者或以上">
 
 ## 1. 好脑图的标准
 

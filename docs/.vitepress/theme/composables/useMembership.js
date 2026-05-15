@@ -13,9 +13,9 @@ const PLAN_LEVELS = {
 
 const PLAN_NAMES = {
   free: '免费体验',
-  basic: '基础版',
-  pro: '进阶版',
-  premium: '高级版'
+  basic: 'AI 学习者',
+  pro: 'AI 实践者',
+  premium: 'AI 掌控者'
 }
 
 const state = ref({
@@ -63,9 +63,9 @@ function getCheckoutApiUrl() {
 
 function normalizePlan(plan) {
   const value = String(plan || 'free').toLowerCase()
-  if (value.includes('premium') || value.includes('高级') || value.includes('旗舰')) return 'premium'
-  if (value.includes('pro') || value.includes('advance') || value.includes('进阶')) return 'pro'
-  if (value.includes('basic') || value.includes('基础')) return 'basic'
+  if (value.includes('premium') || value.includes('高级') || value.includes('旗舰') || value.includes('掌控')) return 'premium'
+  if (value.includes('pro') || value.includes('advance') || value.includes('进阶') || value.includes('实践')) return 'pro'
+  if (value.includes('basic') || value.includes('基础') || value.includes('学习者')) return 'basic'
   return 'free'
 }
 

@@ -43,7 +43,7 @@ AI 可以帮你分析岗位、能力差距和路径选择，但最终判断必�
   />
 </ClientOnly>
 
-<PaywallBlock title="职业路径分析完整课程" plan="高级版或以上">
+<PaywallBlock title="职业路径分析完整课程" plan="AI 掌控者或以上">
 
 ## 1. 职业选择四维度
 

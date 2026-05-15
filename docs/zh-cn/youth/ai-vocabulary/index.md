@@ -43,7 +43,7 @@ AI 很适合做记忆教练：它能帮你生成例句、设计小测、根据�
   />
 </ClientOnly>
 
-<PaywallBlock title="记忆训练完整课程" plan="基础版或以上">
+<PaywallBlock title="记忆训练完整课程" plan="AI 学习者或以上">
 
 ## 1. 为什么死记硬背效率低
 

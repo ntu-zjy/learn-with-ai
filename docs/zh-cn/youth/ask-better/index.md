@@ -44,7 +44,7 @@ AI 当然能回答，但这不一定能让你变强。
   />
 </ClientOnly>
 
-<PaywallBlock title="学生提问公式完整课程" plan="基础版或以上">
+<PaywallBlock title="学生提问公式完整课程" plan="AI 学习者或以上">
 
 ## 1. 学生提问公式
 

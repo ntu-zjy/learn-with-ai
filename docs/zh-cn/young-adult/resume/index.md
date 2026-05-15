@@ -43,7 +43,7 @@ AI 最适合帮你做两件事：读懂岗位 JD，以及把你的经历改写�
   />
 </ClientOnly>
 
-<PaywallBlock title="简历优化完整课程" plan="进阶版或以上">
+<PaywallBlock title="简历优化完整课程" plan="AI 实践者或以上">
 
 ## 1. 先分析岗位，再改简历
 

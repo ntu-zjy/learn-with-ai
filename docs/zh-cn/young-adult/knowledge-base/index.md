@@ -45,7 +45,7 @@ const convData = [
   />
 </ClientOnly>
 
-<PaywallBlock title="个人 AI 知识库完整课程" plan="进阶版或以上">
+<PaywallBlock title="个人 AI 知识库完整课程" plan="AI 实践者或以上">
 
 ## 1. 先定义知识库用途
 

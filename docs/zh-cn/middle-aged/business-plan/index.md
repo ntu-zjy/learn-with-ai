@@ -40,7 +40,7 @@ AI 可以帮你搭结构、补问题、检查逻辑，但商业判断必须来�
   />
 </ClientOnly>
 
-<PaywallBlock title="商业计划书完整课程" plan="高级版或以上">
+<PaywallBlock title="商业计划书完整课程" plan="AI 掌控者或以上">
 
 ## 1. 商业计划书七个模块
 

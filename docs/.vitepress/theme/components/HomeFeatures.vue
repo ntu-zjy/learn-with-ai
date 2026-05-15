@@ -187,51 +187,48 @@ const plans = [
     name: '免费体验',
     price: '¥0',
     unit: '永久免费',
-    features: ['AI 思维入门 5 节', '路径选择器', '基础 Prompt 模板'],
+    features: ['三个人群入门课程', '基础 Prompt 模板', 'AI 对话练习场（限量）'],
     btnText: '立即开始',
     link: '/zh-cn/free/why-different/',
     highlight: false
   },
   {
-    name: '基础版',
+    name: 'AI 学习者',
     price: '¥99',
     unit: '/ 年',
-    badge: '适合学生',
+    badge: null,
     features: [
-      '免费内容全部解锁',
-      '青少年完整课程',
-      '青年入门课程',
-      'AI 学习工作流模板'
+      '三个人群完整基础课',
+      'AI 对话练习场（全部）',
+      'Prompt 模板库（50 条）'
     ],
     btnText: '立即订阅',
     link: '/zh-cn/pricing/',
     highlight: false
   },
   {
-    name: '进阶版',
-    price: '¥299',
+    name: 'AI 实践者',
+    price: '¥399',
     unit: '/ 年',
     badge: '最受欢迎',
     features: [
-      '基础版全部内容',
-      '考研 / 求职专项',
-      'AI 面试模拟',
-      'Prompt 完整模板库'
+      'AI 学习者全部内容',
+      '考研 / 求职 / 商业专项',
+      'Prompt 模板库（200 条）'
     ],
     btnText: '立即订阅',
     link: '/zh-cn/pricing/',
     highlight: true
   },
   {
-    name: '高级版',
-    price: '¥599',
+    name: 'AI 掌控者',
+    price: '¥999',
     unit: '/ 年',
-    badge: '适合中年',
+    badge: null,
     features: [
-      '进阶版全部内容',
-      '商业洞察 / 投资分析',
-      '行业调研方法论',
-      '个人 AI 助手系统'
+      'AI 实践者全部内容',
+      '个人 AI 助手系统',
+      'Prompt 模板库（500+ 条）'
     ],
     btnText: '立即订阅',
     link: '/zh-cn/pricing/',

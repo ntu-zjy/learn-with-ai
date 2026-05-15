@@ -43,7 +43,7 @@ AI 不能替你背书、刷题、上考场，但它可以帮你建立一个更�
   />
 </ClientOnly>
 
-<PaywallBlock title="考研备考完整课程" plan="进阶版或以上">
+<PaywallBlock title="考研备考完整课程" plan="AI 实践者或以上">
 
 ## 1. 备考系统的四个模块
 

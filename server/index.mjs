@@ -23,16 +23,16 @@ const jsonPath = join(dataDir, 'store.json')
 
 const planCatalog = {
   basic: {
-    yearly: { name: 'Learn With AI 基础版年付', money: '99.00', months: 12 },
-    monthly: { name: 'Learn With AI 基础版月付', money: '14.00', months: 1 }
+    yearly: { name: 'Learn With AI AI学习者年付', money: '99.00', months: 12 },
+    monthly: { name: 'Learn With AI AI学习者月付', money: '14.00', months: 1 }
   },
   pro: {
-    yearly: { name: 'Learn With AI 进阶版年付', money: '299.00', months: 12 },
-    monthly: { name: 'Learn With AI 进阶版月付', money: '39.00', months: 1 }
+    yearly: { name: 'Learn With AI AI实践者年付', money: '399.00', months: 12 },
+    monthly: { name: 'Learn With AI AI实践者月付', money: '49.00', months: 1 }
   },
   premium: {
-    yearly: { name: 'Learn With AI 高级版年付', money: '599.00', months: 12 },
-    monthly: { name: 'Learn With AI 高级版月付', money: '79.00', months: 1 }
+    yearly: { name: 'Learn With AI AI掌控者年付', money: '999.00', months: 12 },
+    monthly: { name: 'Learn With AI AI掌控者月付', money: '99.00', months: 1 }
   }
 }
 

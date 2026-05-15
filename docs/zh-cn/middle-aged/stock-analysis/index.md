@@ -37,7 +37,7 @@ const convData = [
   />
 </ClientOnly>
 
-<PaywallBlock title="股票分析入门完整课程" plan="高级版或以上">
+<PaywallBlock title="股票分析入门完整课程" plan="AI 掌控者或以上">
 
 ## 1. 公司研究五个问题
 

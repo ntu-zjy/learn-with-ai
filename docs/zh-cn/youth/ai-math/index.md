@@ -45,7 +45,7 @@ AI 讲题很快，但如果你只看它的完整解析，很容易产生错觉�
   />
 </ClientOnly>
 
-<PaywallBlock title="数学陪练完整课程" plan="基础版或以上">
+<PaywallBlock title="数学陪练完整课程" plan="AI 学习者或以上">
 
 ## 1. 不要直接要解析
 

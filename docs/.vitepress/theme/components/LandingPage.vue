@@ -109,39 +109,51 @@ const plans = [
     unit: '永久免费',
     tag: null,
     highlight: false,
-    features: ['AI 思维入门 5 节', '三条人群路径导览', '基础 Prompt 模板库'],
+    features: ['三个人群入门课程', '基础 Prompt 模板', 'AI 对话练习场（限量）'],
     btn: '立即开始',
     link: '/zh-cn/free/why-different/',
   },
   {
-    name: '基础版',
+    name: 'AI 学习者',
     price: '¥99',
     unit: '/ 年',
-    tag: '适合学生',
+    tag: null,
     highlight: false,
-    features: ['免费内容全部解锁', '青少年完整课程', '青年入门课程', 'AI 学习工作流模板'],
+    features: ['三个人群完整基础课', 'AI 对话练习场（全部）', 'Prompt 模板库（50 条）'],
     btn: '立即订阅',
     link: '/zh-cn/pricing/',
   },
   {
-    name: '进阶版',
-    price: '¥299',
+    name: 'AI 实践者',
+    price: '¥399',
     unit: '/ 年',
     tag: '最受欢迎',
     highlight: true,
-    features: ['基础版全部内容', '考研 / 求职专项课', 'AI 面试模拟系统', 'Prompt 完整模板库'],
+    features: ['AI 学习者全部内容', '考研 / 求职 / 商业专项', 'Prompt 模板库（200 条）'],
     btn: '立即订阅',
     link: '/zh-cn/pricing/',
   },
   {
-    name: '高级版',
-    price: '¥599',
+    name: 'AI 掌控者',
+    price: '¥999',
     unit: '/ 年',
-    tag: '适合中年',
+    tag: null,
     highlight: false,
-    features: ['进阶版全部内容', '商业洞察 / 投资分析', '行业调研方法论', '个人 AI 助手系统'],
+    features: ['AI 实践者全部内容', '个人 AI 助手系统', 'Prompt 模板库（500+ 条）'],
     btn: '立即订阅',
     link: '/zh-cn/pricing/',
+    offline: false,
+  },
+  {
+    name: '线下课程',
+    price: '面议',
+    unit: '· 定制报价',
+    tag: null,
+    highlight: false,
+    features: ['小班制面授（≤12 人）', '教练一对一跟进', '企业定制方案'],
+    btn: '加微信了解',
+    link: '/zh-cn/pricing/',
+    offline: true,
   },
 ]
 
@@ -344,18 +356,26 @@ const testimonials = [
             v-for="p in plans"
             :key="p.name"
             class="pricing-card"
-            :class="{ highlight: p.highlight }"
+            :class="{ highlight: p.highlight, offline: p.offline }"
           >
             <div v-if="p.tag" class="pricing-tag">{{ p.tag }}</div>
             <div class="pricing-name">{{ p.name }}</div>
             <div class="pricing-price">
-              <span class="price-big">{{ p.price }}</span>
+              <span class="price-big" :class="{ 'price-offline': p.offline }">{{ p.price }}</span>
               <span class="price-unit">{{ p.unit }}</span>
+            </div>
+            <div v-if="p.offline" class="pricing-locations">
+              <SvgIcon name="map-pin" :size="12" />
+              北京 · 上海（即将）· 深圳（即将）
             </div>
             <ul class="pricing-features">
               <li v-for="item in p.features" :key="item">{{ item }}</li>
             </ul>
-            <a :href="p.link" class="pricing-btn" :class="p.highlight ? 'primary' : 'ghost'">
+            <a
+              :href="p.offline ? '/zh-cn/pricing/' : p.link"
+              class="pricing-btn"
+              :class="p.highlight ? 'primary' : p.offline ? 'offline' : 'ghost'"
+            >
               {{ p.btn }}
             </a>
           </div>
@@ -1062,7 +1082,7 @@ const testimonials = [
 
 .pricing-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 16px;
   align-items: start;
 }
@@ -1185,6 +1205,33 @@ const testimonials = [
   color: #0071e3;
 }
 
+.pricing-card.offline {
+  border-color: #f59e0b;
+  background: linear-gradient(160deg, rgba(245,158,11,0.06), var(--vp-c-bg));
+}
+
+.price-offline {
+  color: #f59e0b !important;
+}
+
+.pricing-locations {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--vp-c-text-3);
+  margin: -6px 0 4px;
+}
+
+.pricing-btn.offline {
+  background: #f59e0b;
+  color: #fff;
+}
+
+.pricing-btn.offline:hover {
+  background: #d97706;
+}
+
 /* ── FINAL CTA ── */
 .lp-cta-final {
   background: linear-gradient(135deg, #03071e 0%, #05112e 50%, #0a0a20 100%);
@@ -1257,7 +1304,7 @@ const testimonials = [
     grid-template-columns: 1fr;
   }
   .pricing-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
   .path-panel {
     grid-template-columns: 1fr;

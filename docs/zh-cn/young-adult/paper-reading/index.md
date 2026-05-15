@@ -45,7 +45,7 @@ AI 可以降低论文阅读门槛，但你仍然需要回到原文判断证据�
   />
 </ClientOnly>
 
-<PaywallBlock title="论文精读完整课程" plan="进阶版或以上">
+<PaywallBlock title="论文精读完整课程" plan="AI 实践者或以上">
 
 ## 1. 论文精读五问
 

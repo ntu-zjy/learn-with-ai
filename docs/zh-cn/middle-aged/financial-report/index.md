@@ -37,7 +37,7 @@ AI 可以帮你解释概念、整理指标和发现异常，但原始数据必�
   />
 </ClientOnly>
 
-<PaywallBlock title="财报阅读完整课程" plan="高级版或以上">
+<PaywallBlock title="财报阅读完整课程" plan="AI 掌控者或以上">
 
 ## 1. 三张表看什么
 

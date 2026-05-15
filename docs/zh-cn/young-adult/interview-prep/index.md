@@ -45,7 +45,7 @@ AI 可以扮演不同风格的面试官，连续追问你的项目、动机、�
   />
 </ClientOnly>
 
-<PaywallBlock title="面试模拟完整课程" plan="进阶版或以上">
+<PaywallBlock title="面试模拟完整课程" plan="AI 实践者或以上">
 
 ## 1. 面试模拟 Prompt
 

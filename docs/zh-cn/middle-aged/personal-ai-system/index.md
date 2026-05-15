@@ -37,7 +37,7 @@ const convData = [
   />
 </ClientOnly>
 
-<PaywallBlock title="个人 AI 助手系统完整课程" plan="高级版或以上">
+<PaywallBlock title="个人 AI 助手系统完整课程" plan="AI 掌控者或以上">
 
 ## 1. 四类助手
 

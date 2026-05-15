@@ -40,7 +40,7 @@ const convData = [
   />
 </ClientOnly>
 
-<PaywallBlock title="课后复习系统完整课程" plan="进阶版或以上">
+<PaywallBlock title="课后复习系统完整课程" plan="AI 实践者或以上">
 
 ## 1. 复习系统的三个文件夹
 

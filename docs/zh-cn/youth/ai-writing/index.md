@@ -41,7 +41,7 @@ const convData = [
   />
 </ClientOnly>
 
-<PaywallBlock title="作文训练完整课程" plan="基础版或以上">
+<PaywallBlock title="作文训练完整课程" plan="AI 学习者或以上">
 
 ## 1. 先不要让 AI 写全文
 

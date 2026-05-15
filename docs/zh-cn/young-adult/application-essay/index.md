@@ -45,7 +45,7 @@ AI 可以帮你梳理经历和修改表达，但不能替你制造经历或夸�
   />
 </ClientOnly>
 
-<PaywallBlock title="申请文书完整课程" plan="进阶版或以上">
+<PaywallBlock title="申请文书完整课程" plan="AI 实践者或以上">
 
 ## 1. 先挖经历，不先写文章
 

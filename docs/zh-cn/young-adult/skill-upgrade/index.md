@@ -45,7 +45,7 @@ AI 可以帮你把技能学习从"看内容"改成"做任务"：每周产出作�
   />
 </ClientOnly>
 
-<PaywallBlock title="技能提升完整课程" plan="进阶版或以上">
+<PaywallBlock title="技能提升完整课程" plan="AI 实践者或以上">
 
 ## 1. 技能提升三件事
 

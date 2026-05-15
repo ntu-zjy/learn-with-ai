@@ -39,7 +39,7 @@ AI 时代，知识更新变快，但普通人最需要的不是追每个新名�
   />
 </ClientOnly>
 
-<PaywallBlock title="终身学习框架完整课程" plan="高级版或以上">
+<PaywallBlock title="终身学习框架完整课程" plan="AI 掌控者或以上">
 
 ## 1. 终身学习五步循环
 

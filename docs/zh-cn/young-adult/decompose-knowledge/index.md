@@ -47,7 +47,7 @@ const convData = [
   />
 </ClientOnly>
 
-<PaywallBlock title="复杂知识拆解完整课程" plan="进阶版或以上">
+<PaywallBlock title="复杂知识拆解完整课程" plan="AI 实践者或以上">
 
 ## 1. 五层拆解法
 
