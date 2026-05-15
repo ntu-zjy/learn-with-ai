@@ -161,10 +161,22 @@ subagent-middle-aged  → 42岁中层管理者视角
 | subagent-young-adult | 23岁备考大学生，压力大，实用主义 | 有无干货、方法是否具体、有无废话 |
 | subagent-middle-aged | 42岁中层管理者，日程满、重决策 | 有无商业价值、表达是否专业、建议是否落地 |
 
-### 注意
+### 强制规则：内容修改必须由 subagent 执行
 
-- subagent 只读文件内容，不修改文件
-- 优化操作由主 agent 统一执行，改动后跑 `npm run build` 验证
+**禁止 main agent 直接修改任何课程内容文件（`docs/zh-cn/**/*.md`）。**
+
+每个章节的优化改动必须：
+1. 由 main agent 派发一个独立 subagent，在 prompt 中说明具体改什么、改到哪里
+2. subagent 负责读取文件、执行改动、运行 `npm run build` 验证
+3. subagent 完成后向 main agent 汇报结果
+4. main agent 只做协调、汇总和最终 commit，不直接写内容文件
+
+多个章节可以并行派发多个 subagent 同时执行，提高效率。
+
+### 其他注意事项
+
+- 审查阶段的三个角色 subagent（youth/young-adult/middle-aged）只读文件，不修改文件
+- 改动完成后统一由 main agent 执行 `git commit`
 - 如果章节包含 `<PaywallBlock>`，审查付费内容时需说明该内容在付费锁后
 
 ## 图标规范（全站强制执行）
