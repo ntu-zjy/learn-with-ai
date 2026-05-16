@@ -1,13 +1,9 @@
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import SvgIcon from './SvgIcon.vue'
 
-const activeAudience = ref('young-adult')
+const activeAudience = ref('youth')
 const heroVisible = ref(false)
-const statsVisible = ref(false)
-const count1 = ref(0)
-const count2 = ref(0)
-const count3 = ref(0)
 
 const audiences = [
   { id: 'youth', icon: 'school', title: '青少年', sub: '6-18 岁' },
@@ -62,44 +58,8 @@ const audienceData = {
 
 const current = computed(() => audienceData[activeAudience.value])
 
-function animateCount(target, setter, duration = 1600) {
-  const start = Date.now()
-  const tick = () => {
-    const elapsed = Date.now() - start
-    const progress = Math.min(elapsed / duration, 1)
-    const eased = 1 - Math.pow(1 - progress, 3)
-    setter(Math.floor(eased * target))
-    if (progress < 1) requestAnimationFrame(tick)
-    else setter(target)
-  }
-  requestAnimationFrame(tick)
-}
-
-let statsObs = null
 onMounted(() => {
   setTimeout(() => { heroVisible.value = true }, 50)
-
-  const statsEl = document.querySelector('.lp-stats')
-  if (statsEl && 'IntersectionObserver' in window) {
-    statsObs = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting && !statsVisible.value) {
-        statsVisible.value = true
-        animateCount(12800, (v) => { count1.value = v })
-        animateCount(47, (v) => { count2.value = v })
-        animateCount(98, (v) => { count3.value = v })
-        statsObs.disconnect()
-      }
-    }, { threshold: 0.3 })
-    statsObs.observe(statsEl)
-  } else {
-    count1.value = 12800
-    count2.value = 47
-    count3.value = 98
-  }
-})
-
-onBeforeUnmount(() => {
-  if (statsObs) statsObs.disconnect()
 })
 
 const plans = [
@@ -110,7 +70,7 @@ const plans = [
     tag: null,
     highlight: false,
     features: ['三个人群入门课程', '基础 Prompt 模板', 'AI 对话练习场（限量）'],
-    btn: '立即开始',
+    btn: '免费体验第一课',
     link: '/zh-cn/free/why-different/',
   },
   {
@@ -120,7 +80,7 @@ const plans = [
     tag: null,
     highlight: false,
     features: ['三个人群完整基础课', 'AI 对话练习场（全部）', 'Prompt 模板库（50 条）'],
-    btn: '立即订阅',
+    btn: '联系购买',
     link: '/zh-cn/pricing/',
   },
   {
@@ -130,7 +90,7 @@ const plans = [
     tag: '最受欢迎',
     highlight: true,
     features: ['AI 学习者全部内容', '考研 / 求职 / 商业专项', 'Prompt 模板库（200 条）'],
-    btn: '立即订阅',
+    btn: '联系购买',
     link: '/zh-cn/pricing/',
   },
   {
@@ -140,20 +100,8 @@ const plans = [
     tag: null,
     highlight: false,
     features: ['AI 实践者全部内容', '个人 AI 助手系统', 'Prompt 模板库（500+ 条）'],
-    btn: '立即订阅',
+    btn: '联系购买',
     link: '/zh-cn/pricing/',
-    offline: false,
-  },
-  {
-    name: '线下课程',
-    price: '面议',
-    unit: '· 定制报价',
-    tag: null,
-    highlight: false,
-    features: ['小班制面授（≤12 人）', '教练一对一跟进', '企业定制方案'],
-    btn: '加微信了解',
-    link: '/zh-cn/pricing/',
-    offline: true,
   },
 ]
 
@@ -183,49 +131,98 @@ const testimonials = [
       <div class="hero-inner">
         <div class="hero-badge">
           <span class="badge-dot" />
-          AI 学习平台 · 三类人群专属课程
+          由 AI 工程师设计 · 专为青少年学习场景打造
         </div>
         <h1 class="hero-title">
-          <span class="title-line title-line-1">学会用 AI</span>
-          <span class="title-line title-line-2">去终身学习</span>
+          <span class="title-line title-line-1">别让孩子用 AI</span>
+          <span class="title-line title-line-2">只会抄作业</span>
         </h1>
         <p class="hero-sub">
-          不是教你用什么工具，而是教你用 AI 思考、学习、成长。<br>
-          从孩子到中年，每个人都值得拥有 AI 学习力。
+          教他们用 AI 思考——换了工具照样能用，这才是真正的竞争力。<br>
+          现在会用 AI 的同龄人，已经开始拉开差距了。
         </p>
+        <div class="hero-highlights">
+          <div class="highlight-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>覆盖语文、数学、英语等真实学科场景</span>
+          </div>
+          <div class="highlight-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>边学边练的 AI 对话练习，不只是看视频</span>
+          </div>
+          <div class="highlight-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>教思维方式，ChatGPT 换成 DeepSeek 照样能用</span>
+          </div>
+        </div>
         <div class="hero-actions">
           <a href="/zh-cn/free/why-different/" class="btn-hero-primary">
-            <span>免费开始体验</span>
+            <span>免费体验第一课</span>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </a>
-          <a href="/zh-cn/pricing/" class="btn-hero-secondary">查看课程与定价</a>
+          <a href="/zh-cn/pricing/" class="btn-hero-secondary">查看全部课程</a>
         </div>
         <div class="hero-proof">
-          <span class="proof-item">✓ 永久免费入门课程</span>
+          <span class="proof-item">✓ 无需注册，打开即学</span>
           <span class="proof-sep">·</span>
-          <span class="proof-item">✓ 无需信用卡</span>
+          <span class="proof-item">✓ 永久免费入门课</span>
           <span class="proof-sep">·</span>
-          <span class="proof-item">✓ 立刻可用</span>
+          <span class="proof-item">✓ 5 分钟感受不同</span>
         </div>
       </div>
     </section>
 
-    <!-- ░░ STATS ░░ -->
-    <section class="lp-stats">
-      <div class="stats-inner">
-        <div class="stat-item">
-          <div class="stat-num">{{ count1.toLocaleString('zh-CN') }}+</div>
-          <div class="stat-label">学员正在使用</div>
+    <!-- ░░ COURSE HIGHLIGHTS ░░ -->
+    <section class="lp-highlights">
+      <div class="highlights-inner">
+        <div class="highlight-card">
+          <div class="hlcard-icon">
+            <SvgIcon name="school" :size="24" />
+          </div>
+          <div class="hlcard-title">青少年专属设计</div>
+          <div class="hlcard-desc">不是成人课程的简化版，是从孩子真实学科痛点出发重新设计的</div>
         </div>
-        <div class="stat-divider" />
-        <div class="stat-item">
-          <div class="stat-num">{{ count2 }}+</div>
-          <div class="stat-label">实操课程节数</div>
+        <div class="highlight-card">
+          <div class="hlcard-icon">
+            <SvgIcon name="message-circle" :size="24" />
+          </div>
+          <div class="hlcard-title">真实 AI 交互练习</div>
+          <div class="hlcard-desc">每节课都有配套练习，孩子直接和 AI 对话，不是看老师演示</div>
         </div>
-        <div class="stat-divider" />
-        <div class="stat-item">
-          <div class="stat-num">{{ count3 }}%</div>
-          <div class="stat-label">学员认为比普通教程有效</div>
+        <div class="highlight-card">
+          <div class="hlcard-icon">
+            <SvgIcon name="clipboard-list" :size="24" />
+          </div>
+          <div class="hlcard-title">即学即用的 Prompt 模板</div>
+          <div class="hlcard-desc">学完每节课就有可以直接复制使用的模板，不是学完不知道怎么用</div>
+        </div>
+        <div class="highlight-card">
+          <div class="hlcard-icon">
+            <SvgIcon name="sparkles" :size="24" />
+          </div>
+          <div class="hlcard-title">教思维，不教工具</div>
+          <div class="hlcard-desc">今天学 ChatGPT，明天换 DeepSeek，方法照样有效</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ░░ FOUNDER ░░ -->
+    <section class="lp-section lp-founder">
+      <div class="section-container founder-inner">
+        <div class="founder-avatar">张</div>
+        <div class="founder-content">
+          <div class="founder-label">课程设计者</div>
+          <p class="founder-text">
+            我是一名 AI 工程师，在行业里每天和大模型打交道。我发现身边很多家长都在问同一个问题：
+            <strong>孩子该怎么学 AI？</strong>
+            那些让孩子去刷 "100 个 ChatGPT 用法" 的课，根本没用——工具一变，全白学。
+            真正有用的，是教孩子<strong>怎么跟 AI 协作思考</strong>。
+            所以我把自己理解的方法论，设计成了这套课程。
+          </p>
+          <a href="tel:+8618567331658" class="founder-contact">
+            <SvgIcon name="message-circle" :size="14" />
+            有任何问题，加微信咨询：+86 18567331658
+          </a>
         </div>
       </div>
     </section>
@@ -233,8 +230,8 @@ const testimonials = [
     <!-- ░░ VALUE PROP ░░ -->
     <section class="lp-section lp-value">
       <div class="section-container">
-        <div class="section-eyebrow">为什么不一样</div>
-        <h2 class="section-title">这不是工具教程<br>而是思维升级课</h2>
+        <div class="section-eyebrow">为什么选这套课</div>
+        <h2 class="section-title">市面上的 AI 课<br>大多数在浪费孩子时间</h2>
         <div class="value-grid">
           <div class="value-col value-before">
             <div class="value-col-label before">普通 AI 教程</div>
@@ -264,8 +261,8 @@ const testimonials = [
     <!-- ░░ AUDIENCE PATHS ░░ -->
     <section class="lp-section lp-paths">
       <div class="section-container">
-        <div class="section-eyebrow">你是谁</div>
-        <h2 class="section-title">选择你的专属路径</h2>
+        <div class="section-eyebrow">课程内容</div>
+        <h2 class="section-title">你的孩子能学到什么</h2>
         <div class="path-tabs">
           <button
             v-for="a in audiences"
@@ -327,8 +324,8 @@ const testimonials = [
     <!-- ░░ TESTIMONIALS ░░ -->
     <section class="lp-section lp-testimonials">
       <div class="section-container">
-        <div class="section-eyebrow">学员说</div>
-        <h2 class="section-title">真实使用后的反馈</h2>
+        <div class="section-eyebrow">学员反馈</div>
+        <h2 class="section-title">学完之后，他们是这么用的</h2>
         <div class="testimonials-grid">
           <div v-for="t in testimonials" :key="t.name" class="testimonial-card">
             <div class="t-quote">"</div>
@@ -350,7 +347,7 @@ const testimonials = [
       <div class="section-container">
         <div class="section-eyebrow">定价</div>
         <h2 class="section-title">阶梯解锁，按需付费</h2>
-        <p class="section-sub">从免费开始，随时升级。没有隐藏费用。</p>
+        <p class="section-sub">先免费体验，觉得有用再联系购买。没有隐藏费用。</p>
         <div class="pricing-grid">
           <div
             v-for="p in plans"
@@ -386,12 +383,16 @@ const testimonials = [
     <!-- ░░ FINAL CTA ░░ -->
     <section class="lp-cta-final">
       <div class="cta-final-inner">
-        <h2 class="cta-final-title">开始你的 AI 学习之旅</h2>
-        <p class="cta-final-sub">免费内容无需注册，打开即学。5 分钟感受 AI 学习的不同。</p>
+        <h2 class="cta-final-title">先体验，再决定</h2>
+        <p class="cta-final-sub">免费课程无需注册，打开直接学。5 分钟感受一下和其他课的不同。<br>觉得有用，再加微信咨询付费课程。</p>
         <a href="/zh-cn/free/why-different/" class="btn-cta-final">
-          立即免费体验
+          免费体验第一课
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
+        <div class="cta-final-contact">
+          <SvgIcon name="message-circle" :size="14" />
+          <span>或直接加微信咨询：+86 18567331658</span>
+        </div>
       </div>
     </section>
   </div>
@@ -609,50 +610,144 @@ const testimonials = [
   opacity: 0.4;
 }
 
-/* ── STATS ── */
-.lp-stats {
+/* ── HERO HIGHLIGHTS ── */
+.hero-highlights {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0 auto 36px;
+  max-width: 480px;
+  text-align: left;
+}
+
+.hero-highlights .highlight-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.5;
+}
+
+.hero-highlights .highlight-item svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: #22d3ee;
+}
+
+/* ── COURSE HIGHLIGHTS ── */
+.lp-highlights {
   background: #0a0f1a;
   border-top: 1px solid rgba(255,255,255,0.06);
   border-bottom: 1px solid rgba(255,255,255,0.06);
-  padding: 48px 32px;
+  padding: 56px 32px;
 }
 
-.stats-inner {
-  max-width: 800px;
+.highlights-inner {
+  max-width: 960px;
   margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.highlight-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.hlcard-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(0,113,227,0.15);
+  border: 1px solid rgba(0,113,227,0.2);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0;
+  color: #60a5fa;
 }
 
-.stat-item {
-  flex: 1;
-  text-align: center;
-  padding: 0 40px;
+.hlcard-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.9);
 }
 
-.stat-num {
-  font-size: clamp(32px, 5vw, 48px);
-  font-weight: 800;
-  background: linear-gradient(135deg, #60a5fa, #c084fc);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  line-height: 1.1;
-  margin-bottom: 6px;
-  letter-spacing: -0.02em;
-}
-
-.stat-label {
+.hlcard-desc {
   font-size: 13px;
-  color: rgba(255,255,255,0.4);
+  color: rgba(255,255,255,0.45);
+  line-height: 1.65;
 }
 
-.stat-divider {
-  width: 1px;
-  height: 48px;
-  background: rgba(255,255,255,0.1);
+/* ── FOUNDER ── */
+.lp-founder {
+  background: var(--vp-c-bg-soft);
+  border-top: 1px solid var(--vp-c-divider);
+  border-bottom: 1px solid var(--vp-c-divider);
+}
+
+.founder-inner {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+}
+
+.founder-avatar {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0071e3, #7c3aed);
+  color: #fff;
+  font-size: 24px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.founder-content {
+  flex: 1;
+}
+
+.founder-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #0071e3;
+  margin-bottom: 12px;
+}
+
+.founder-text {
+  font-size: 15px;
+  color: var(--vp-c-text-1);
+  line-height: 1.8;
+  margin: 0 0 16px;
+}
+
+.founder-text strong {
+  color: var(--vp-c-brand-1);
+}
+
+.founder-contact {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #0071e3;
+  text-decoration: none;
+  border: 1px solid rgba(0,113,227,0.3);
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.founder-contact:hover {
+  background: rgba(0,113,227,0.08);
 }
 
 /* ── SECTIONS COMMON ── */
@@ -1292,6 +1387,16 @@ const testimonials = [
   box-shadow: 0 12px 40px rgba(255,255,255,0.15);
 }
 
+.cta-final-contact {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 20px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.4);
+}
+
 /* ── RESPONSIVE ── */
 @media (max-width: 900px) {
   .value-grid {
@@ -1304,11 +1409,18 @@ const testimonials = [
     grid-template-columns: 1fr;
   }
   .pricing-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
   }
   .path-panel {
     grid-template-columns: 1fr;
     gap: 24px;
+  }
+  .highlights-inner {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .founder-inner {
+    flex-direction: column;
+    gap: 20px;
   }
 }
 
@@ -1322,13 +1434,8 @@ const testimonials = [
   .pricing-grid {
     grid-template-columns: 1fr;
   }
-  .stats-inner {
-    flex-direction: column;
-    gap: 32px;
-  }
-  .stat-divider {
-    width: 48px;
-    height: 1px;
+  .highlights-inner {
+    grid-template-columns: 1fr;
   }
   .path-tabs {
     gap: 8px;

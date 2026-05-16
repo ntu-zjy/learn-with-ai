@@ -70,6 +70,9 @@ docker run -d --name learn-with-ai --restart always \
   -e ZPAY_PID=2088532797471982 \
   -e ZPAY_KEY=lgB4Pj67NjYF1RUxYiavF1BfRnyWYUYc \
   -e ZPAY_API=https://zpayz.cn/submit.php \
+  -e ZPAY_MOCK=1 \
+  -e OPENROUTER_API_KEY=你的Key \
+  -e OPENROUTER_MODEL=nvidia/nemotron-3-super-120b-a12b:free \
   learn-with-ai:latest
 
 # 验证容器正常运行
@@ -114,7 +117,9 @@ curl -s -o /dev/null -w "HTTP状态码: %{http_code}\n" http://localhost:3000/zh
 | `ZPAY_PID` | ZPAY 商户 ID |
 | `ZPAY_KEY` | ZPAY 签名密钥，勿泄露 |
 | `ZPAY_API` | ZPAY 支付接口地址 |
-| `ZPAY_MOCK` | 设为 `1` 则跳过真实支付（本地调试用），生产环境留空 |
+| `ZPAY_MOCK` | 设为 `1` 则跳过真实支付（备案通过前保持 1），生产环境留空 |
+| `OPENROUTER_API_KEY` | OpenRouter API Key，用于 AI 对话功能 |
+| `OPENROUTER_MODEL` | 模型 ID，默认 `nvidia/nemotron-3-super-120b-a12b:free`（免费） |
 
 本地备份文件：`.env.local`（已加入 `.gitignore`，不会提交到 git）。
 
