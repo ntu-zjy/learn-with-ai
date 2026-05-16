@@ -1,4 +1,4 @@
-FROM node:20-alpine AS builder
+FROM mirror.ccs.tencentyun.com/library/node:20-alpine AS builder
 
 WORKDIR /app
 COPY package*.json ./
@@ -8,7 +8,7 @@ COPY . .
 ENV SEALOS=1
 RUN npm run build
 
-FROM node:20-alpine AS runner
+FROM mirror.ccs.tencentyun.com/library/node:20-alpine AS runner
 
 WORKDIR /app
 ENV NODE_ENV=production
