@@ -4,32 +4,10 @@
       <h2>选择适合你的方案</h2>
       <p>所有方案包含 14 天无理由退款保障</p>
     </div>
-    <div class="billing-toggle">
-      <button :class="{ active: billing === 'yearly' }" @click="billing = 'yearly'">按年付（省 40%）</button>
-      <button :class="{ active: billing === 'monthly' }" @click="billing = 'monthly'">按月付</button>
-    </div>
-    <div class="pay-type-toggle" aria-label="支付方式">
-      <span>支付方式</span>
-      <button :class="{ active: payType === 'alipay' }" type="button" @click="payType = 'alipay'">
-        支付宝
-      </button>
-      <button :class="{ active: payType === 'wxpay' }" type="button" @click="payType = 'wxpay'">
-        微信支付
-      </button>
-    </div>
     <el-alert
-      v-if="checkoutNotice"
-      class="checkout-notice"
-      :title="checkoutNotice"
-      type="success"
-      show-icon
-      :closable="false"
-    />
-    <el-alert
-      v-if="membership.error"
-      class="checkout-notice"
-      :title="membership.error"
-      type="warning"
+      class="checkout-notice offline-notice"
+      title="在线支付通道正在建设中，如需购买课程请联系我们"
+      type="info"
       show-icon
       :closable="false"
     />
@@ -69,23 +47,34 @@
             {{ f.text }}
           </li>
         </ul>
-        <!-- 线下课程：微信咨询按钮 -->
+        <!-- 线下课程：联系方式 -->
         <template v-if="plan.id === 'offline'">
-          <a :href="'https://work.weixin.qq.com/'" target="_blank" class="plan-cta cta-offline">
-            <SvgIcon name="message-circle" :size="16" />
-            加微信了解
-          </a>
-          <div class="plan-audience">北京 · 即将开放上海 / 深圳</div>
+          <div class="wechat-qr-placeholder">
+            <div class="qr-box">微信二维码</div>
+          </div>
+          <div class="offline-contact">
+            <SvgIcon name="message-circle" :size="14" />
+            <span>+86 18567331658</span>
+          </div>
+          <div class="plan-audience">扫码或电话咨询</div>
+        </template>
+        <template v-else-if="plan.id === 'free'">
+          <button
+            class="plan-cta cta-secondary"
+            type="button"
+            @click="handlePlanClick(plan)"
+          >
+            立即开始
+          </button>
+          <div class="plan-audience">适合：{{ plan.audience }}</div>
         </template>
         <template v-else>
           <button
-            class="plan-cta"
+            class="plan-cta cta-disabled"
             type="button"
-            :class="plan.highlight ? 'cta-primary' : 'cta-secondary'"
-            :disabled="plan.id !== 'free' && (membership.loading || hasPlanAccess(plan.id))"
-            @click="handlePlanClick(plan)"
+            disabled
           >
-            {{ getCtaText(plan) }}
+            暂停服务，敬请期待
           </button>
           <div class="plan-audience">适合：{{ plan.audience }}</div>
         </template>
@@ -544,6 +533,48 @@ async function handlePlanClick(plan) {
   font-size: 11px;
   color: var(--vp-c-text-3);
   text-align: center;
+}
+
+.offline-notice {
+  margin: 0 auto 36px;
+  max-width: 680px;
+}
+
+.cta-disabled {
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-3);
+  border: 1px solid var(--vp-c-divider);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.wechat-qr-placeholder {
+  display: flex;
+  justify-content: center;
+  margin: 4px 0;
+}
+
+.qr-box {
+  width: 120px;
+  height: 120px;
+  border: 2px dashed var(--vp-c-divider);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: var(--vp-c-text-3);
+  background: var(--vp-c-bg);
+}
+
+.offline-contact {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--vp-c-text-1);
 }
 
 /* 线下课程卡片 */
