@@ -31,6 +31,9 @@ Docker Hub (jingyuanzzz/learn-with-ai:latest)
 
 ## 日常发布流程
 
+> **注意**：腾讯云大陆服务器无法直连 Docker Hub（被墙），也无法通过镜像加速拉取个人账号镜像。
+> 标准流程是：本地 push → 服务器 git pull → 服务器本地 docker build。
+
 ### 第一步：推送代码
 
 ```bash
@@ -41,17 +44,7 @@ git push origin main
 
 Husky pre-push hook 会自动跑一次强制构建验证，通过后才会真正 push。
 
-### 第二步：等 Actions 完成
-
-```bash
-gh run list --repo ntu-zjy/learn-with-ai --limit 3
-```
-
-看最新一条变成 `completed success` 即可（通常 1-2 分钟）。
-
-也可以在浏览器查看：https://github.com/ntu-zjy/learn-with-ai/actions
-
-### 第三步：SSH 登录服务器更新镜像
+### 第二步：SSH 登录服务器，拉代码并重新 build
 
 ```bash
 ssh root@118.25.82.34
@@ -60,13 +53,14 @@ ssh root@118.25.82.34
 登录后执行：
 
 ```bash
-# 拉取最新镜像
-docker pull jingyuanzzz/learn-with-ai:latest
+# 拉取最新代码
+cd /opt/learn-with-ai && git pull origin main
 
-# 停止并删除旧容器
-docker stop learn-with-ai && docker rm learn-with-ai
+# 重新构建镜像（基础镜像走腾讯云镜像源，约 1-3 分钟）
+docker build -t learn-with-ai:latest .
 
-# 启动新容器（所有环境变量）
+# 停止旧容器并启动新容器
+docker stop learn-with-ai && docker rm learn-with-ai && \
 docker run -d --name learn-with-ai --restart always \
   -p 3000:80 \
   -v /data/learn-with-ai:/data \
@@ -76,14 +70,21 @@ docker run -d --name learn-with-ai --restart always \
   -e ZPAY_PID=2088532797471982 \
   -e ZPAY_KEY=lgB4Pj67NjYF1RUxYiavF1BfRnyWYUYc \
   -e ZPAY_API=https://zpayz.cn/submit.php \
-  jingyuanzzz/learn-with-ai:latest
+  learn-with-ai:latest
 
 # 验证容器正常运行
-docker ps
-curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/zh-cn/
+curl -s -o /dev/null -w "HTTP状态码: %{http_code}\n" http://localhost:3000/zh-cn/
 ```
 
-最后一行应该返回 `200`。
+最后一行应该返回 `HTTP状态码: 200`。
+
+### 为什么不用 Docker Hub？
+
+| 方式 | 问题 |
+|------|------|
+| `docker pull jingyuanzzz/...` | Docker Hub 在国内被墙，超时 |
+| 腾讯云镜像加速 | 只缓存官方镜像，不缓存个人账号镜像 |
+| 服务器本地 build | ✅ 可行，GitHub 在国内可访问，基础镜像走腾讯云镜像源 |
 
 ---
 
